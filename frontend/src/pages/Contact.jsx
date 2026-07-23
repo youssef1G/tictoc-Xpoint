@@ -1,12 +1,13 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { submitComplaint } from '../api.js'
+import { useLocale } from '../context/LocaleContext.jsx'
 
-function validate(form) {
+function validate(form, t) {
   const e = {}
-  if (form.name.trim().length < 2) e.name = 'Please enter your full name'
-  if (!/^(010|011|012|015)\d{8}$/.test(form.phone.replace(/\s/g, ''))) e.phone = 'Enter a valid Egyptian number'
-  if (form.message.trim().length < 10) e.message = 'Please describe your issue (min 10 characters)'
+  if (form.name.trim().length < 2) e.name = t('contact.nameError')
+  if (!/^(010|011|012|015)\d{8}$/.test(form.phone.replace(/\s/g, ''))) e.phone = t('contact.phoneError')
+  if (form.message.trim().length < 10) e.message = t('contact.messageError')
   return e
 }
 
@@ -21,6 +22,7 @@ function Field({ label, error, children }) {
 }
 
 export default function Contact() {
+  const { t } = useLocale()
   const [form, setForm] = useState({ name: '', phone: '', message: '' })
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
@@ -57,14 +59,14 @@ export default function Contact() {
   async function handleSubmit(e) {
     e.preventDefault()
     setServerError('')
-    const errs = validate(form)
+    const errs = validate(form, t)
     if (Object.keys(errs).length) return setErrors(errs)
     setLoading(true)
     try {
       await submitComplaint(form)
       setSuccess(true)
     } catch (err) {
-      setServerError(err.message || 'Something went wrong.')
+      setServerError(err.message || t('contact.genericError'))
     } finally {
       setLoading(false)
     }
@@ -79,9 +81,9 @@ export default function Contact() {
             <polyline points="22 4 12 14.01 9 11.01" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
-        <h2 className="text-heading-lg text-[var(--text)] mb-2">Message received</h2>
-        <p className="text-sm text-[var(--muted)] mb-8">Thank you for reaching out. We'll get back to you soon.</p>
-        <Link to="/" className="btn-primary text-sm">Back to home</Link>
+        <h2 className="text-heading-lg text-[var(--text)] mb-2">{t('contact.received')}</h2>
+        <p className="text-sm text-[var(--muted)] mb-8">{t('contact.receivedDesc')}</p>
+        <Link to="/" className="btn-primary text-sm">{t('contact.backHome')}</Link>
       </div>
     )
   }
@@ -90,31 +92,31 @@ export default function Contact() {
     <div className="max-w-xl mx-auto px-5 sm:px-8 py-14 sm:py-20">
       <div className="text-center mb-10">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--brand-dim)] border border-[var(--brand)]/10 mb-4">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand)]">Support</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand)]">{t('contact.badge')}</span>
         </div>
-        <h1 className="text-display text-[var(--text)] mb-2">Contact us</h1>
-        <p className="text-sm text-[var(--muted)]">Have a complaint or need help? We're here for you.</p>
+        <h1 className="text-display text-[var(--text)] mb-2">{t('contact.title')}</h1>
+        <p className="text-sm text-[var(--muted)]">{t('contact.desc')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-        <Field label="Full name" error={errors.name}>
+        <Field label={t('contact.fullName')} error={errors.name}>
           <input value={form.name} onChange={set('name')} onKeyDown={e => next(e, phoneRef)}
-            placeholder="Mohamed Ahmed" className={inputCls('name')} />
+            placeholder={t('contact.namePlaceholder')} className={inputCls('name')} />
         </Field>
-        <Field label="Phone number" error={errors.phone}>
+        <Field label={t('contact.phone')} error={errors.phone}>
           <input ref={phoneRef} value={form.phone} onChange={set('phone')} onKeyDown={e => next(e, messageRef)}
-            placeholder="01x xxxx xxxx" className={inputCls('phone')} />
+            placeholder={t('contact.phonePlaceholder')} className={inputCls('phone')} />
         </Field>
-        <Field label="Your message" error={errors.message}>
+        <Field label={t('contact.message')} error={errors.message}>
           <textarea ref={messageRef} value={form.message} onChange={set('message')} onKeyDown={send}
-            rows={5} placeholder="Describe your issue in detail..." className={inputCls('message')} />
+            rows={5} placeholder={t('contact.messagePlaceholder')} className={inputCls('message')} />
         </Field>
         {serverError && (
           <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{serverError}</p>
         )}
         <button type="submit" disabled={loading}
           className="btn-primary w-full py-3.5 text-sm disabled:opacity-50">
-          {loading ? 'Sending...' : 'Send message'}
+          {loading ? t('contact.sending') : t('contact.send')}
         </button>
       </form>
     </div>

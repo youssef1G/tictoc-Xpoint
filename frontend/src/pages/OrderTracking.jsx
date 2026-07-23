@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { fetchOrder } from '../api.js'
+import { useLocale } from '../context/LocaleContext.jsx'
 
 const STEPS = [
-  { key: 'pending',   label: 'Order placed',    icon: '🛍️' },
-  { key: 'confirmed', label: 'Confirmed',        icon: '✅' },
-  { key: 'shipped',   label: 'Out for delivery', icon: '🚚' },
-  { key: 'delivered', label: 'Delivered',        icon: '📦' },
+  { key: 'pending',   labelKey: 'order.placed',   icon: '🛍️' },
+  { key: 'confirmed', labelKey: 'order.confirmed', icon: '✅' },
+  { key: 'shipped',   labelKey: 'order.outForDelivery', icon: '🚚' },
+  { key: 'delivered', labelKey: 'order.delivered', icon: '📦' },
 ]
 const STATUS_IDX = { pending: 0, confirmed: 1, shipped: 2, delivered: 3 }
 
@@ -16,6 +17,7 @@ function formatDate(str) {
 }
 
 export default function OrderTracking() {
+  const { t } = useLocale()
   const { id } = useParams()
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -25,7 +27,7 @@ export default function OrderTracking() {
     setLoading(true)
     fetchOrder(id)
       .then(setOrder)
-      .catch(() => setError('Order not found.'))
+      .catch(() => setError(t('tracking.notFound')))
       .finally(() => setLoading(false))
   }
   useEffect(() => { load() }, [id])
@@ -38,13 +40,15 @@ export default function OrderTracking() {
 
   if (error || !order) return (
     <div className="max-w-md mx-auto px-5 py-24 text-center">
-      <p className="text-sm text-[var(--muted)] mb-4">{error || 'Order not found.'}</p>
-      <Link to="/my-orders" className="text-xs font-medium text-[var(--brand)] hover:underline">← My orders</Link>
+      <p className="text-sm text-[var(--muted)] mb-4">{error || t('tracking.notFound')}</p>
+      <Link to="/my-orders" className="text-xs font-medium text-[var(--brand)] hover:underline">{t('tracking.backOrders')}</Link>
     </div>
   )
 
   const currentIdx = STATUS_IDX[order.status] ?? 0
   const cancelled = order.status === 'cancelled'
+  const computedSubtotal = (order.items || []).reduce((sum, i) => sum + Number(i.price) * i.quantity, 0)
+  const computedShipping = Math.max(0, Math.round((order.total - computedSubtotal) * 100) / 100)
 
   return (
     <div className="max-w-2xl mx-auto px-5 sm:px-8 py-10 sm:py-14 space-y-8">
@@ -119,6 +123,12 @@ export default function OrderTracking() {
               <span className="text-[var(--text)] font-medium">EGP {Number(item.price * item.quantity).toFixed(0)}</span>
             </div>
           ))}
+          {computedShipping > 0 && (
+            <div className="flex justify-between text-xs text-[var(--muted)]">
+              <span>Shipping</span>
+              <span>EGP {Number(computedShipping).toFixed(0)}</span>
+            </div>
+          )}
           <div className="flex justify-between text-sm font-bold text-[var(--text)] pt-2 border-t border-[var(--border)]">
             <span>Total</span>
             <span>EGP {Number(order.total).toFixed(0)}</span>

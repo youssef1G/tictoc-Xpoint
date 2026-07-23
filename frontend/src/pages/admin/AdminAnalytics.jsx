@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useLocale } from '../../context/LocaleContext.jsx'
 import { fetchAnalytics } from '../../api.js'
 import { LoadingState } from '../../components/StatusStates.jsx'
+import CustomSelect from '../../components/CustomSelect.jsx'
 
 function StatCard({ label, value, subtitle, accent }) {
   return (
@@ -28,9 +30,16 @@ function ChartBar({ label, value, max, color }) {
 
 export default function AdminAnalytics() {
   const { token } = useAuth()
+  const { t } = useLocale()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [days, setDays] = useState(30)
+  const dayOptions = [
+    { value: 7, label: t('admin.analytics.last7') },
+    { value: 30, label: t('admin.analytics.last30') },
+    { value: 90, label: t('admin.analytics.last90') },
+    { value: 365, label: t('admin.analytics.lastYear') },
+  ]
 
   useEffect(() => {
     setLoading(true)
@@ -40,11 +49,11 @@ export default function AdminAnalytics() {
       .finally(() => setLoading(false))
   }, [days])
 
-  if (loading) return <LoadingState label="Loading analytics..." />
+  if (loading) return <LoadingState label={t('admin.analytics.loading')} />
 
   if (!data) return (
     <div className="text-center py-16">
-      <p className="text-sm text-[var(--muted)]">No analytics data available yet.</p>
+      <p className="text-sm text-[var(--muted)]">{t('admin.analytics.noData')}</p>
     </div>
   )
 
@@ -54,46 +63,42 @@ export default function AdminAnalytics() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-heading text-xl font-bold text-[var(--text)]">Analytics</h2>
-          <p className="text-xs text-[var(--muted)] mt-1">Sales and performance data</p>
+          <h2 className="font-heading text-xl font-bold text-[var(--text)]">{t('admin.analytics.title')}</h2>
+          <p className="text-xs text-[var(--muted)] mt-1">{t('admin.analytics.subtitle')}</p>
         </div>
-        <select value={days} onChange={e => setDays(Number(e.target.value))}
-          className="text-xs bg-[var(--surface)] border border-[var(--border)] rounded-xl px-3 py-2 text-[var(--text)] focus:outline-none focus:border-[var(--brand)]">
-          <option value={7}>Last 7 days</option>
-          <option value={30}>Last 30 days</option>
-          <option value={90}>Last 90 days</option>
-          <option value={365}>Last year</option>
-        </select>
+        <div className="w-[180px]">
+          <CustomSelect value={days} onChange={v => setDays(v)} options={dayOptions} placeholder={t('admin.analytics.last30')} />
+        </div>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Orders" value={data.totalOrders || 0} />
-        <StatCard label="Revenue" value={`EGP ${Number(data.totalRevenue || 0).toFixed(0)}`} accent="text-[var(--brand)]" />
-        <StatCard label="Avg Order Value" value={`EGP ${Number(data.avgOrderValue || 0).toFixed(0)}`} />
-        <StatCard label="Completion Rate" value={data.completionRate != null ? `${data.completionRate}%` : '—'} />
+        <StatCard label={t('admin.analytics.totalOrders')} value={data.totalOrders || 0} />
+        <StatCard label={t('admin.analytics.revenue')} value={`EGP ${Number(data.totalRevenue || 0).toFixed(0)}`} accent="text-[var(--brand)]" />
+        <StatCard label={t('admin.analytics.avgOrder')} value={`EGP ${Number(data.avgOrderValue || 0).toFixed(0)}`} />
+        <StatCard label={t('admin.analytics.completionRate')} value={data.completionRate != null ? `${data.completionRate}%` : '—'} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="surface-card p-5">
-          <h3 className="font-heading text-sm font-bold text-[var(--text)] mb-4">Orders by Status</h3>
+          <h3 className="font-heading text-sm font-bold text-[var(--text)] mb-4">{t('admin.analytics.ordersByStatus')}</h3>
           <div className="space-y-2">
             {(data.ordersByStatus || []).map(s => (
               <ChartBar key={s.status} label={s.status} value={s.count} max={data.totalOrders} />
             ))}
             {(!data.ordersByStatus || data.ordersByStatus.length === 0) && (
-              <p className="text-xs text-[var(--muted)]">No orders yet.</p>
+              <p className="text-xs text-[var(--muted)]">{t('admin.analytics.noOrders')}</p>
             )}
           </div>
         </div>
 
         <div className="surface-card p-5">
-          <h3 className="font-heading text-sm font-bold text-[var(--text)] mb-4">Orders by Category</h3>
+          <h3 className="font-heading text-sm font-bold text-[var(--text)] mb-4">{t('admin.analytics.ordersByCategory')}</h3>
           <div className="space-y-2">
             {(data.ordersByCategory || []).map(c => (
               <ChartBar key={c.category} label={c.category} value={c.count} max={maxCategory} color="var(--accent)" />
             ))}
             {(!data.ordersByCategory || data.ordersByCategory.length === 0) && (
-              <p className="text-xs text-[var(--muted)]">No category data yet.</p>
+              <p className="text-xs text-[var(--muted)]">{t('admin.analytics.noCatData')}</p>
             )}
           </div>
         </div>

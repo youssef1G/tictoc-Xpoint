@@ -7,6 +7,7 @@ import Footer         from './components/Footer'
 import ContactButton  from './components/ContactButton.jsx'
 import Home           from './pages/Home'
 import Shop           from './pages/Shop'
+import StorePage      from './pages/StorePage'
 import ProductDetail  from './pages/ProductDetail'
 import Cart           from './pages/Cart'
 import Checkout       from './pages/Checkout'
@@ -57,6 +58,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<StorefrontLayout><Home /></StorefrontLayout>} />
         <Route path="/shop" element={<StorefrontLayout><Shop /></StorefrontLayout>} />
+        <Route path="/shop/:store" element={<StorefrontLayout><StorePage /></StorefrontLayout>} />
         <Route path="/product/:id" element={<StorefrontLayout><ProductDetail /></StorefrontLayout>} />
         <Route path="/cart" element={<StorefrontLayout><Cart /></StorefrontLayout>} />
         <Route path="/checkout" element={<StorefrontLayout><Checkout /></StorefrontLayout>} />

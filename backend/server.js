@@ -126,7 +126,7 @@ app.get('/health', (req, res) => res.json({ ok: true }))
 
 app.get('/api/products', async (req, res) => {
   try {
-    res.json(await getAllProducts())
+    res.json(await getAllProducts(req.query.store || null))
   } catch (err) {
     sendError(res, err)
   }
@@ -144,7 +144,7 @@ app.get('/api/products/:id', async (req, res) => {
 
 app.get('/api/categories', async (req, res) => {
   try {
-    res.json(await getAllCategories())
+    res.json(await getAllCategories(req.query.store || null))
   } catch (err) {
     sendError(res, err)
   }
@@ -393,6 +393,11 @@ app.post('/api/returns', async (req, res) => {
       return res.status(400).json({ error: 'Order ID and reason are required' })
     const order = await getOrderById(order_id)
     if (!order) return res.status(404).json({ error: 'Order not found' })
+
+    const allReturns = await getAllReturnRequests()
+    const existing = allReturns.find(r => r.order_id === order_id && r.status !== 'cancelled')
+    if (existing) return res.status(409).json({ error: 'You already have a pending return for this order' })
+
     const request = await createReturnRequest({ order_id, reason, details })
     res.status(201).json(request)
   } catch (err) {

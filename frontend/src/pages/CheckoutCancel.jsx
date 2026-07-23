@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
+import { useLocale } from '../context/LocaleContext.jsx'
 
 export default function CheckoutCancel() {
+  const { t } = useLocale()
   return (
     <div className="max-w-lg mx-auto px-5 py-24 text-center">
       <div className="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-800 border border-[var(--border)] flex items-center justify-center mx-auto mb-5">
@@ -9,11 +11,11 @@ export default function CheckoutCancel() {
           <path d="M15 9l-6 6M9 9l6 6" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
-      <h1 className="text-heading-lg text-[var(--text)] mb-3">No worries</h1>
-      <p className="text-sm text-[var(--muted)] mb-8">Your order was cancelled. Your cart is still waiting for you.</p>
+      <h1 className="text-heading-lg text-[var(--text)] mb-3">{t('checkoutCancel.title')}</h1>
+      <p className="text-sm text-[var(--muted)] mb-8">{t('checkoutCancel.desc')}</p>
       <div className="flex gap-3 justify-center">
-        <Link to="/cart" className="btn-primary text-sm">Back to cart</Link>
-        <Link to="/shop" className="btn-secondary text-sm">Keep shopping</Link>
+        <Link to="/cart" className="btn-primary text-sm">{t('checkoutCancel.backToCart')}</Link>
+        <Link to="/shop" className="btn-secondary text-sm">{t('checkoutCancel.keepShopping')}</Link>
       </div>
     </div>
   )

@@ -2,13 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
-
-const links = [
-  { to: '/',          label: 'Home'      },
-  { to: '/shop',      label: 'Shop'      },
-  { to: '/about',     label: 'About'     },
-  { to: '/my-orders', label: 'Orders'    },
-]
+import { useLocale } from '../context/LocaleContext.jsx'
 
 function SunIcon({ className = '' }) {
   return (
@@ -39,7 +33,16 @@ function CartIcon({ className = '' }) {
 export default function Navbar() {
   const { itemCount, setIsCartOpen } = useCart()
   const { dark, toggle }             = useTheme()
+  const { t, lang, toggleLang }       = useLocale()
   const [menuOpen, setMenuOpen]      = useState(false)
+
+  const links = [
+    { to: '/',             label: t('nav.home')    },
+    { to: '/shop/xpoint',  label: t('nav.xpoint')  },
+    { to: '/shop/tictoc',  label: t('nav.tictoc')  },
+    { to: '/about',        label: t('nav.about')   },
+    { to: '/my-orders',    label: t('nav.orders')  },
+  ]
 
   const linkClass = ({ isActive }) =>
     `relative text-[13px] font-medium tracking-tight transition-colors hover:text-[var(--brand)] py-1 ${
@@ -51,10 +54,10 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-[72px]">
 
         <Link to="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setMenuOpen(false)}>
-          <img src="/logo.jpg" alt="Tic Toc Xpoint" className="h-9 w-9 rounded-lg object-cover" />
+          <img src="/logo.jpg" alt={t('brand.tictoc') + ' ' + t('brand.xpoint')} className="h-9 w-9 rounded-lg object-cover" />
           <div className="flex flex-col leading-tight">
-            <span className="font-heading font-semibold text-[15px] tracking-tight text-[var(--text)]">Tic Toc</span>
-            <span className="font-heading font-medium text-[10px] uppercase tracking-[0.15em] text-[var(--muted)]">Xpoint</span>
+            <span className="font-heading font-semibold text-[15px] tracking-tight text-[var(--text)]">{t('brand.tictoc')}</span>
+            <span className="font-heading font-medium text-[10px] uppercase tracking-[0.15em] text-[var(--muted)]">{t('brand.xpoint')}</span>
           </div>
         </Link>
 
@@ -77,9 +80,15 @@ export default function Navbar() {
             {dark ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
           </button>
 
+          <button type="button" onClick={toggleLang}
+            className="h-10 w-10 rounded-full flex items-center justify-center text-[11px] font-bold text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--border)]/40 transition-colors"
+            title={lang === 'en' ? t('lang.toggle') : t('lang.toggleToEn')}>
+            {lang === 'en' ? 'AR' : 'EN'}
+          </button>
+
           <button onClick={() => setIsCartOpen(true)}
             className="relative h-10 w-10 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--border)]/40 transition-colors"
-            aria-label={`Open cart, ${itemCount} item${itemCount === 1 ? '' : 's'}`}>
+            aria-label={t('cart.bag')}>
             <CartIcon className="w-5 h-5" />
             {itemCount > 0 && (
               <span className="absolute top-1.5 right-2 min-w-[18px] h-[18px] bg-[var(--brand)] text-white text-[10px] font-semibold rounded-full flex items-center justify-center px-1">
@@ -109,6 +118,10 @@ export default function Navbar() {
               {link.label}
             </NavLink>
           ))}
+          <button onClick={() => { toggleLang(); setMenuOpen(false) }}
+            className="mt-2 px-4 py-3 rounded-xl text-[15px] font-medium text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--muted)]/5 transition-colors text-left">
+            {lang === 'en' ? '🇪🇬 العربية' : '🇬🇧 English'}
+          </button>
         </nav>
       )}
     </header>

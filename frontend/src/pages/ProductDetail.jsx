@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext.jsx'
 import ProductCard from '../components/ProductCard.jsx'
 import ProductGallery from '../components/ProductGallery.jsx'
 import { LoadingState, ErrorState } from '../components/StatusStates.jsx'
+import { useLocale } from '../context/LocaleContext.jsx'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -14,6 +15,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState(null)
   const [related, setRelated] = useState([])
   const [status, setStatus] = useState('loading')
+  const { t } = useLocale()
 
   const load = () => {
     setStatus('loading'); setProduct(null)
@@ -31,8 +33,8 @@ export default function ProductDetail() {
   useEffect(() => { setQuantity(1) }, [id])
 
   if (status === 'not-found') return <Navigate to="/shop" replace />
-  if (status === 'loading') return <LoadingState label="Loading product..." />
-  if (status === 'error' || !product) return <ErrorState message="Couldn't load this product." onRetry={load} />
+  if (status === 'loading') return <LoadingState label={t('productDetail.loading')} />
+  if (status === 'error' || !product) return <ErrorState message={t('productDetail.loadError')} onRetry={load} />
 
   const outOfStock = product.stock !== null && product.stock !== undefined && product.stock === 0
   const lowStock = product.stock !== null && product.stock !== undefined && product.stock > 0 && product.stock <= 5
@@ -48,9 +50,9 @@ export default function ProductDetail() {
   return (
     <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
       <nav className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8">
-        <Link to="/shop" className="hover:text-[var(--brand)]">Shop</Link>
+        <Link to="/shop" className="hover:text-[var(--brand)]">{t('productDetail.shop')}</Link>
         <span>/</span>
-        <Link to={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:text-[var(--brand)]">{product.category}</Link>
+        <Link to={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:text-[var(--brand)]">{t('cat.' + product.category) || product.category}</Link>
         <span>/</span>
         <span className="text-[var(--text)]">{product.name}</span>
       </nav>
@@ -60,7 +62,7 @@ export default function ProductDetail() {
           <ProductGallery images={product.images} image={product.image} name={product.name} />
           {outOfStock ? (
             <div className="absolute top-4 left-4 bg-[var(--text)]/80 text-[var(--bg)] text-xs font-semibold uppercase tracking-[0.08em] px-4 py-1.5 rounded-full backdrop-blur-sm">
-              Out of stock
+              {t('productDetail.outOfStock')}
             </div>
           ) : product.tag ? (
             <span className="absolute top-4 left-4 bg-[var(--brand)] text-white text-xs font-semibold uppercase tracking-[0.08em] px-3 py-1 rounded-lg">
@@ -77,10 +79,10 @@ export default function ProductDetail() {
           </p>
 
           {lowStock && !outOfStock && (
-            <p className="mt-2 text-xs font-medium text-amber-600">Only {product.stock} left in stock</p>
+            <p className="mt-2 text-xs font-medium text-amber-600">{t('productDetail.inStock', { count: product.stock })}</p>
           )}
           {outOfStock && (
-            <p className="mt-2 text-xs font-medium text-[var(--muted)]">Currently out of stock</p>
+            <p className="mt-2 text-xs font-medium text-[var(--muted)]">{t('productDetail.currentlyOutOfStock')}</p>
           )}
 
           <p className="mt-5 text-sm text-[var(--muted)] leading-relaxed">{product.description}</p>
@@ -99,10 +101,12 @@ export default function ProductDetail() {
           <div className="mt-8 flex items-center gap-4">
             <div className={`flex items-center rounded-full border ${outOfStock ? 'border-[var(--border)] opacity-40' : 'border-[var(--border)]'}`}>
               <button onClick={() => setQuantity(q => Math.max(1, q - 1))} disabled={outOfStock}
-                className="h-11 w-11 flex items-center justify-center text-[var(--text)] hover:bg-[var(--muted)]/10 rounded-l-full transition-colors disabled:cursor-not-allowed">−</button>
+                className="h-11 w-11 flex items-center justify-center text-[var(--text)] hover:bg-[var(--muted)]/10 rounded-l-full transition-colors disabled:cursor-not-allowed"
+                aria-label={t('productDetail.decrease', { name: product.name })}>−</button>
               <span className="w-10 text-center text-sm font-medium">{quantity}</span>
               <button onClick={() => setQuantity(q => Math.min(q + 1, maxQty))} disabled={outOfStock || quantity >= maxQty}
-                className="h-11 w-11 flex items-center justify-center text-[var(--text)] hover:bg-[var(--muted)]/10 rounded-r-full transition-colors disabled:cursor-not-allowed disabled:opacity-40">+</button>
+                className="h-11 w-11 flex items-center justify-center text-[var(--text)] hover:bg-[var(--muted)]/10 rounded-r-full transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label={t('productDetail.increase', { name: product.name })}>+</button>
             </div>
             <button onClick={handleAdd} disabled={outOfStock}
               className={`flex-1 rounded-full font-semibold py-3 text-sm transition-all ${
@@ -110,14 +114,14 @@ export default function ProductDetail() {
                   ? 'bg-[var(--muted)]/10 text-[var(--muted)] cursor-not-allowed'
                   : 'btn-primary py-3'
               }`}>
-              {outOfStock ? 'Out of stock' : added ? 'Added ✓' : 'Add to cart'}
+              {outOfStock ? t('productDetail.outOfStock') : added ? t('productDetail.added') : t('productDetail.addToCart')}
             </button>
           </div>
 
           {!outOfStock && (
             <button onClick={() => { addToCart(product, quantity); setIsCartOpen(true) }}
               className="mt-3 w-full rounded-full border border-[var(--brand)] text-[var(--brand)] font-semibold py-3 text-sm hover:bg-[var(--brand-dim)] transition-colors">
-              Add &amp; view cart
+              {t('productDetail.viewCart')}
             </button>
           )}
         </div>
@@ -127,8 +131,8 @@ export default function ProductDetail() {
         <section className="mt-20 sm:mt-28">
           <div className="flex items-end justify-between mb-8">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--muted)] mb-1">Related</p>
-              <h2 className="text-heading-lg text-[var(--text)]">You might also like</h2>
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--muted)] mb-1">{t('productDetail.related')}</p>
+              <h2 className="text-heading-lg text-[var(--text)]">{t('productDetail.alsoLike')}</h2>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 sm:gap-6">

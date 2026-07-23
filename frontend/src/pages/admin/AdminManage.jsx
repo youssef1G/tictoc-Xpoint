@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useLocale } from '../../context/LocaleContext.jsx'
 import { fetchAdmins, createAdmin, deleteAdmin, changeAdminPassword } from '../../api.js'
 
 export default function AdminManage() {
   const { token } = useAuth()
+  const { t } = useLocale()
   const navigate = useNavigate()
   const [admins, setAdmins] = useState([])
   const [loading, setLoading] = useState(true)
@@ -28,14 +30,14 @@ export default function AdminManage() {
 
   async function handleCreate(e) {
     e.preventDefault(); setCreateError('')
-    if (newUsername.length < 3) { setCreateError('Username must be at least 3 characters'); return }
-    if (newPassword.length < 8) { setCreateError('Password must be at least 8 characters'); return }
+    if (newUsername.length < 3) { setCreateError(t('admin.manage.usernameError')); return }
+    if (newPassword.length < 8) { setCreateError(t('admin.manage.passwordError')); return }
     setCreating(true)
     try {
       const admin = await createAdmin(token, { username: newUsername, password: newPassword })
       setAdmins(prev => [...prev, admin])
       setNewUsername(''); setNewPassword('')
-    } catch (err) { setCreateError(err.message || 'Could not create admin') }
+    } catch (err) { setCreateError(err.message || t('admin.manage.createError')) }
     finally { setCreating(false) }
   }
 
@@ -49,13 +51,13 @@ export default function AdminManage() {
 
   async function handleChangePassword(id) {
     setPwError('')
-    if (newPw.length < 8) { setPwError('Password must be at least 8 characters'); return }
+    if (newPw.length < 8) { setPwError(t('admin.manage.passwordError')); return }
     setPwSaving(true)
     try {
       await changeAdminPassword(token, id, newPw)
       setPwSuccess(true)
       setTimeout(() => { setChangingPasswordId(null); setPwSuccess(false); setNewPw('') }, 1500)
-    } catch (err) { setPwError(err.message || 'Could not change password') }
+    } catch (err) { setPwError(err.message || t('admin.manage.changeError')) }
     finally { setPwSaving(false) }
   }
 
@@ -64,32 +66,32 @@ export default function AdminManage() {
   return (
     <div className="space-y-8 max-w-2xl">
       <div>
-        <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4">Add new admin</h2>
+        <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4">{t('admin.manage.addAdmin')}</h2>
         <form onSubmit={handleCreate} className="surface-card p-5 space-y-4">
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">Username</label>
+              <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.manage.username')}</label>
               <input type="text" value={newUsername} onChange={e => setNewUsername(e.target.value)}
-                placeholder="min 3 characters" className={inputCls} />
+                placeholder={t('admin.manage.usernamePlaceholder')} className={inputCls} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">Password</label>
+              <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.manage.password')}</label>
               <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
-                placeholder="min 8 characters" className={inputCls} />
+                placeholder={t('admin.manage.passwordPlaceholder')} className={inputCls} />
             </div>
           </div>
           {createError && <p className="text-xs text-red-500">{createError}</p>}
           <button type="submit" disabled={creating}
             className="btn-primary text-sm disabled:opacity-50">
-            {creating ? 'Creating...' : 'Add admin'}
+            {creating ? t('admin.manage.creating') : t('admin.manage.add')}
           </button>
         </form>
       </div>
 
       <div>
-        <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4">Existing admins</h2>
-        {loading ? <p className="text-xs text-[var(--muted)]">Loading...</p> : admins.length === 0 ? (
-          <p className="text-sm text-[var(--muted)]">No additional admins.</p>
+        <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4">{t('admin.manage.existing')}</h2>
+        {loading ? <p className="text-xs text-[var(--muted)]">{t('status.loading')}</p> : admins.length === 0 ? (
+          <p className="text-sm text-[var(--muted)]">{t('admin.manage.noAdmins')}</p>
         ) : (
           <div className="space-y-3">
             {admins.map(admin => (
@@ -112,30 +114,30 @@ export default function AdminManage() {
                       setPwError(''); setNewPw(''); setPwSuccess(false)
                     }}
                       className="text-[11px] font-medium text-[var(--brand)] border border-[var(--brand)]/30 rounded-full px-3 py-1 hover:bg-[var(--brand-dim)] transition-colors">
-                      Password
+                      {t('admin.manage.changePassword')}
                     </button>
                     {confirmDeleteId === admin.id ? (
                       <div className="flex gap-1">
                         <button onClick={() => handleDelete(admin.id)}
-                          className="text-[11px] text-white bg-red-500 hover:bg-red-600 rounded-full px-3 py-1 transition-colors">Confirm</button>
+                          className="text-[11px] text-white bg-red-500 hover:bg-red-600 rounded-full px-3 py-1 transition-colors">{t('admin.manage.confirm')}</button>
                         <button onClick={() => setConfirmDeleteId(null)}
-                          className="text-[11px] text-[var(--muted)] border border-[var(--border)] rounded-full px-3 py-1 hover:bg-[var(--muted)]/10 transition-colors">Cancel</button>
+                          className="text-[11px] text-[var(--muted)] border border-[var(--border)] rounded-full px-3 py-1 hover:bg-[var(--muted)]/10 transition-colors">{t('admin.form.cancel')}</button>
                       </div>
                     ) : (
                       <button onClick={() => setConfirmDeleteId(admin.id)}
-                        className="text-[11px] text-[var(--muted)] border border-[var(--border)] rounded-full px-3 py-1 hover:text-red-500 transition-colors">Remove</button>
+                        className="text-[11px] text-[var(--muted)] border border-[var(--border)] rounded-full px-3 py-1 hover:text-red-500 transition-colors">{t('admin.manage.remove')}</button>
                     )}
                   </div>
                 </div>
                 {changingPasswordId === admin.id && (
                   <div className="mt-3 pt-3 border-t border-[var(--border)] space-y-3">
                     <input type="password" value={newPw} onChange={e => setNewPw(e.target.value)}
-                      placeholder="New password (min 8 characters)" className={inputCls} />
+                      placeholder={t('admin.manage.newPasswordPlaceholder')} className={inputCls} />
                     {pwError && <p className="text-xs text-red-500">{pwError}</p>}
-                    {pwSuccess && <p className="text-xs text-green-600">Password changed!</p>}
+                    {pwSuccess && <p className="text-xs text-green-600">{t('admin.manage.passwordChanged')}</p>}
                     <button onClick={() => handleChangePassword(admin.id)} disabled={pwSaving}
                       className="btn-primary text-xs disabled:opacity-50">
-                      {pwSaving ? 'Saving...' : 'Save password'}
+                      {pwSaving ? t('admin.orders.saving') : t('admin.manage.savePassword')}
                     </button>
                   </div>
                 )}

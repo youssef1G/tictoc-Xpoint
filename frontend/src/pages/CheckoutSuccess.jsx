@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
+import { useLocale } from '../context/LocaleContext.jsx'
 
 export default function CheckoutSuccess() {
+  const { t } = useLocale()
   const [params] = useSearchParams()
   const { clearCart } = useCart()
   const orderId = params.get('orderId')
@@ -17,21 +19,21 @@ export default function CheckoutSuccess() {
           <polyline points="22 4 12 14.01 9 11.01" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
-      <h1 className="text-display text-[var(--text)] mb-3">Order placed!</h1>
+      <h1 className="text-display text-[var(--text)] mb-3">{t('checkoutSuccess.title')}</h1>
       <p className="text-sm text-[var(--muted)] mb-2">
-        Thank you for your order. We'll prepare it and deliver it as soon as possible.
+        {t('checkoutSuccess.desc')}
       </p>
       {orderId && (
-        <p className="text-xs font-mono text-[var(--muted)] mb-8">Order ID: {orderId}</p>
+        <p className="text-xs font-mono text-[var(--muted)] mb-8">{t('checkoutSuccess.orderId', { id: orderId })}</p>
       )}
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         {orderId && (
           <Link to={`/order/${orderId}`} className="btn-primary text-sm">
-            Track my order →
+            {t('checkoutSuccess.track')}
           </Link>
         )}
         <Link to="/shop" className="btn-secondary text-sm">
-          Continue shopping
+          {t('checkoutSuccess.continue')}
         </Link>
       </div>
     </div>

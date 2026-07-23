@@ -3,19 +3,14 @@ import { useNavigate, useParams, Link } from 'react-router-dom'
 import { ChevronDown, Search, Plus, X, Check, Infinity as InfinityIcon } from 'lucide-react'
 import { fetchProduct, fetchCategories, createProduct, updateProduct, deleteProduct } from '../../api.js'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useLocale } from '../../context/LocaleContext.jsx'
 import { LoadingState, ErrorState } from '../../components/StatusStates.jsx'
 import ImageUploader from '../../components/ImageUploader.jsx'
 import CustomSelect from '../../components/CustomSelect.jsx'
 
-const TAG_OPTIONS = [
-  { value: '',        label: 'None' },
-  { value: 'New',     label: 'New' },
-  { value: 'Bestseller', label: 'Bestseller' },
-]
-
 const emptyForm = {
   name: '', category: '', price: '', stock: '', tag: '',
-  images: [], description: '', details: '',
+  images: [], description: '', details: '', store: 'xpoint',
 }
 
 function formFromProduct(p) {
@@ -28,6 +23,7 @@ function formFromProduct(p) {
     images: p.images && p.images.length > 0 ? p.images : (p.image ? [p.image] : []),
     description: p.description || '',
     details: (p.details || []).join('\n'),
+    store: p.store || 'xpoint',
   }
 }
 
@@ -35,6 +31,7 @@ export default function ProductForm() {
   const { id } = useParams()
   const isEdit = Boolean(id)
   const { token, logout } = useAuth()
+  const { t } = useLocale()
   const navigate = useNavigate()
 
   const [form, setForm] = useState(emptyForm)
@@ -51,6 +48,12 @@ export default function ProductForm() {
   const catRef = useRef(null)
 
   const isDirty = JSON.stringify(form) !== JSON.stringify(savedForm)
+
+  const tagOptions = [
+    { value: '', label: t('admin.form.none') },
+    { value: 'New', label: t('admin.form.tagNew') },
+    { value: 'Bestseller', label: t('admin.form.tagBestseller') },
+  ]
 
   useEffect(() => {
     const handler = e => { if (!isDirty) return; e.preventDefault(); e.returnValue = '' }
@@ -110,12 +113,12 @@ export default function ProductForm() {
   const handleChange = field => e => { setErrors(p => ({ ...p, [field]: '' })); setForm(prev => ({ ...prev, [field]: e.target.value })) }
 
   const handleCancel = () => {
-    if (isDirty && !window.confirm('You have unsaved changes. Leave anyway?')) return
+    if (isDirty && !window.confirm(t('admin.form.leaveConfirm'))) return
     navigate('/admin/products')
   }
 
   const handleDelete = async () => {
-    if (!window.confirm(`Delete this product permanently?`)) return
+    if (!window.confirm(t('admin.form.deleteConfirm'))) return
     setDeleting(true)
     try {
       await deleteProduct(token, id)
@@ -132,15 +135,16 @@ export default function ProductForm() {
     setError(null)
 
     const newErrors = {}
-    if (!form.name.trim()) newErrors.name = 'Required'
-    if (!form.category.trim()) newErrors.category = 'Required'
-    if (form.price === '' || isNaN(Number(form.price))) newErrors.price = 'Required'
+    if (!form.name.trim()) newErrors.name = t('admin.form.required')
+    if (!form.category.trim()) newErrors.category = t('admin.form.required')
+    if (form.price === '' || isNaN(Number(form.price))) newErrors.price = t('admin.form.required')
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
 
     const payload = {
       name: form.name.trim(),
       category: form.category.trim(),
+      store: form.store || 'xpoint',
       price: Number(form.price),
       stock: unlimitedStock ? null : (form.stock === '' ? null : Number(form.stock)),
       tag: form.tag || null,
@@ -163,8 +167,8 @@ export default function ProductForm() {
     }
   }
 
-  if (status === 'loading') return <LoadingState label="Loading product..." />
-  if (status === 'error') return <ErrorState message="Couldn't load this product." />
+  if (status === 'loading') return <LoadingState label={t('status.loading')} />
+  if (status === 'error') return <ErrorState message={t('productDetail.loadError')} />
 
   const inputCls = (field) =>
     `w-full rounded-xl border px-4 py-3 text-sm bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--muted)]/50 focus:outline-none transition-colors ${
@@ -180,46 +184,70 @@ export default function ProductForm() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <h2 className="font-heading text-xl font-bold text-[var(--text)]">
-            {isEdit ? 'Edit product' : 'Add product'}
+            {isEdit ? t('admin.form.edit') : t('admin.form.add')}
           </h2>
           {isDirty && (
             <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 dark:bg-amber-900/20 dark:text-amber-400 border border-amber-200 rounded-full px-2.5 py-0.5">
-              Unsaved
+              {t('admin.form.unsaved')}
             </span>
           )}
         </div>
         {isEdit && (
           <Link to={`/product/${id}`} target="_blank"
             className="text-xs font-medium text-[var(--brand)] hover:underline">
-            View on storefront →
+            {t('admin.form.viewStorefront')}
           </Link>
         )}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="surface-card p-5 space-y-5">
-          <h3 className="font-heading text-sm font-bold text-[var(--text)]">Basic info</h3>
+          <h3 className="font-heading text-sm font-bold text-[var(--text)]">{t('admin.form.basicInfo')}</h3>
 
           <div>
-            <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">Name</label>
+            <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.form.name')}</label>
             <input type="text" value={form.name} onChange={handleChange('name')}
-              className={inputCls('name')} placeholder="Product name" />
+              className={inputCls('name')} placeholder={t('admin.form.namePlaceholder')} />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.form.store')}</label>
+            <div className="flex gap-3">
+              <label className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-3 text-sm font-semibold cursor-pointer transition-colors ${
+                form.store === 'xpoint'
+                  ? 'border-[var(--accent)] bg-[var(--accent-dim)] text-[var(--accent)]'
+                  : 'border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)]/30 bg-[var(--surface)]'
+              }`}>
+                <input type="radio" name="store" value="xpoint" checked={form.store === 'xpoint'}
+                  onChange={e => setForm(p => ({ ...p, store: e.target.value }))} className="sr-only" />
+                {t('admin.form.xpoint')}
+              </label>
+              <label className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-3 text-sm font-semibold cursor-pointer transition-colors ${
+                form.store === 'tictoc'
+                  ? 'border-[var(--brand)] bg-[var(--brand-dim)] text-[var(--brand)]'
+                  : 'border-[var(--border)] text-[var(--muted)] hover:border-[var(--brand)]/30 bg-[var(--surface)]'
+              }`}>
+                <input type="radio" name="store" value="tictoc" checked={form.store === 'tictoc'}
+                  onChange={e => setForm(p => ({ ...p, store: e.target.value }))} className="sr-only" />
+                {t('admin.form.tictoc')}
+              </label>
+            </div>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">
             <div ref={catRef} className="relative">
-              <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">Category</label>
+              <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.form.category')}</label>
               <div className={`flex items-center rounded-xl border bg-[var(--surface)] focus-within:ring-2 focus-within:ring-[var(--brand)] transition-colors ${
                 errors.category ? 'border-red-400 ring-2 ring-red-400/20'
                   : catOpen ? 'border-[var(--brand)]' : 'border-[var(--border)]'
               }`}>
                 <Search size={15} className="ml-3.5 text-[var(--muted)] shrink-0" />
-                <input type="text" value={catOpen ? catQuery : form.category}
+                <input type="text" value={catOpen ? catQuery : (form.category ? t('cat.' + form.category) || form.category : '')}
                   onChange={e => { setCatQuery(e.target.value); handleChange('category')(e); setCatOpen(true) }}
                   onFocus={() => { setCatQuery(form.category); setCatOpen(true) }}
                   onKeyDown={handleCatKeyDown}
                   className="w-full text-sm py-3 px-2.5 bg-transparent text-[var(--text)] placeholder:text-[var(--muted)]/50 focus:outline-none focus:ring-0"
-                  placeholder="Search or type new..." autoComplete="off" />
+                  placeholder={t('admin.form.categorySearch')} autoComplete="off" />
                 {form.category && (
                   <button type="button"
                     onClick={() => { setForm(p => ({ ...p, category: '' })); setCatQuery('') }}
@@ -240,7 +268,7 @@ export default function ProductForm() {
                           c === form.category ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400 font-medium'
                             : 'text-[var(--text)] hover:bg-gray-100 dark:hover:bg-gray-800'
                         }`}>
-                        <span className="truncate">{c}</span>
+                        <span className="truncate">{t('cat.' + c) || c}</span>
                         {c === form.category && <Check size={14} className="shrink-0" />}
                       </button>
                     </li>
@@ -250,29 +278,29 @@ export default function ProductForm() {
                       <button type="button"
                         onClick={() => selectCategory(catQuery)}
                         className="w-full flex items-center gap-1.5 text-left px-4 py-2.5 text-sm font-medium text-brand-700 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/20 transition-colors">
-                        <Plus size={14} /> Create "{catQuery}"
+                        <Plus size={14} /> {t('admin.form.createCategory', { cat: catQuery })}
                       </button>
                     </li>
                   )}
                   {!catQuery && categories.length === 0 && (
-                    <li className="px-4 py-3 text-xs text-[var(--muted)] text-center">No categories yet — type to create one</li>
+                    <li className="px-4 py-3 text-xs text-[var(--muted)] text-center">{t('admin.form.noCategories')}</li>
                   )}
                 </ul>
               )}
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">Tag</label>
-              <CustomSelect value={form.tag} onChange={v => { setForm(p => ({ ...p, tag: v })) }} options={TAG_OPTIONS} placeholder="None" />
+              <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.form.tag')}</label>
+              <CustomSelect value={form.tag} onChange={v => { setForm(p => ({ ...p, tag: v })) }} options={tagOptions} placeholder={t('admin.form.none')} />
             </div>
           </div>
         </div>
 
         <div className="surface-card p-5 space-y-5">
-          <h3 className="font-heading text-sm font-bold text-[var(--text)]">Pricing & stock</h3>
+          <h3 className="font-heading text-sm font-bold text-[var(--text)]">{t('admin.form.pricing')}</h3>
 
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">Price <span className="text-[var(--muted)] font-normal">(EGP)</span></label>
+              <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.form.price')} <span className="text-[var(--muted)] font-normal">(EGP)</span></label>
               <div className={`flex items-center rounded-xl border overflow-hidden bg-[var(--surface)] transition-colors ${
                 errors.price ? 'border-red-400 ring-2 ring-red-400/20' : 'border-[var(--border)]'
               }`}>
@@ -284,16 +312,16 @@ export default function ProductForm() {
                     if (e.key === 'ArrowDown') { e.preventDefault(); setForm(p => ({ ...p, price: String(Math.max(0, (Number(p.price) || 0) - 1)) })); setErrors(prev => ({ ...prev, price: '' })) }
                   }}
                   className="w-full text-sm py-3 px-3 bg-transparent text-[var(--text)] placeholder:text-[var(--muted)]/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  placeholder="0.00" />
+                  placeholder={t('admin.form.pricePlaceholder')} />
               </div>
-              {errors.price && <p className="mt-1.5 text-[11px] text-red-500">Enter a valid price</p>}
+              {errors.price && <p className="mt-1.5 text-[11px] text-red-500">{t('admin.form.validPrice')}</p>}
             </div>
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold text-[var(--text)]">Stock</label>
+                <label className="block text-xs font-semibold text-[var(--text)]">{t('admin.form.stock')}</label>
                 <label className="flex items-center gap-2 text-xs text-[var(--muted)] cursor-pointer select-none">
                   <InfinityIcon size={13} className={unlimitedStock ? 'text-[var(--brand)]' : ''} />
-                  Unlimited
+                  {t('admin.form.unlimited')}
                   <button type="button" role="switch" aria-checked={unlimitedStock}
                     onClick={() => { const next = !unlimitedStock; setUnlimitedStock(next); if (next) setForm(p => ({ ...p, stock: '' })) }}
                     className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${unlimitedStock ? 'bg-[var(--brand)]' : 'bg-[var(--muted)]/25'}`}>
@@ -311,36 +339,36 @@ export default function ProductForm() {
                   onChange={handleChange('stock')}
                   disabled={unlimitedStock}
                   className="w-full text-sm py-3 text-center bg-transparent text-[var(--text)] placeholder:text-[var(--muted)]/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  placeholder={unlimitedStock ? 'Unlimited' : '0'} />
+                  placeholder={unlimitedStock ? t('admin.form.unlimited') : '0'} />
                 <button type="button" onClick={() => { if (!unlimitedStock) { setForm(p => ({ ...p, stock: String((Number(p.stock) || 0) + 1) })) } }}
                   disabled={unlimitedStock}
                   className="w-9 h-[44px] flex items-center justify-center text-sm text-[var(--muted)] hover:text-[var(--brand)] hover:bg-gray-100 dark:hover:bg-gray-800 transition shrink-0 disabled:cursor-not-allowed">+</button>
               </div>
               {!unlimitedStock && form.stock === '0' && (
-                <p className="mt-1.5 text-[11px] text-amber-600">Product will show as out of stock</p>
+                <p className="mt-1.5 text-[11px] text-amber-600">{t('admin.form.outOfStock')}</p>
               )}
             </div>
           </div>
         </div>
 
         <div className="surface-card p-5 space-y-5">
-          <h3 className="font-heading text-sm font-bold text-[var(--text)]">Media</h3>
+          <h3 className="font-heading text-sm font-bold text-[var(--text)]">{t('admin.form.media')}</h3>
           <ImageUploader images={form.images} onChange={imgs => setForm(prev => ({ ...prev, images: imgs }))} />
         </div>
 
         <div className="surface-card p-5 space-y-5">
-          <h3 className="font-heading text-sm font-bold text-[var(--text)]">Details</h3>
+          <h3 className="font-heading text-sm font-bold text-[var(--text)]">{t('admin.form.details')}</h3>
 
           <div>
-            <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">Description</label>
+            <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.form.description')}</label>
             <textarea value={form.description} onChange={handleChange('description')} rows={4}
               className={inputCls()} />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">Features (one per line)</label>
+            <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.form.features')}</label>
             <textarea value={form.details} onChange={handleChange('details')} rows={4}
-              placeholder={'Material\nDimensions\nWeight'}
+              placeholder={t('admin.form.featuresPlaceholder')}
               className={inputCls()} />
             {detailLines.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-2">
@@ -360,15 +388,15 @@ export default function ProductForm() {
           <div className="flex gap-3">
             <button type="submit" disabled={saving}
               className="btn-primary text-sm disabled:opacity-50">
-              {saving ? 'Saving...' : isEdit ? 'Save changes' : 'Add product'}
+              {saving ? t('admin.form.saving') : isEdit ? t('admin.form.saveEdit') : t('admin.form.saveAdd')}
             </button>
             <button type="button" onClick={handleCancel}
-              className="btn-secondary text-sm">Cancel</button>
+              className="btn-secondary text-sm">{t('admin.form.cancel')}</button>
           </div>
           {isEdit && (
             <button type="button" onClick={handleDelete} disabled={deleting}
               className="text-xs text-[var(--muted)] hover:text-red-500 transition-colors disabled:opacity-50">
-              {deleting ? 'Deleting...' : 'Delete product'}
+              {deleting ? t('admin.form.deleting') : t('admin.form.deleteProduct')}
             </button>
           )}
         </div>

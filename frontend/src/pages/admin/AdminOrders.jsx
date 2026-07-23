@@ -1,16 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useLocale } from '../../context/LocaleContext.jsx'
 import { fetchOrders, updateOrder } from '../../api.js'
 import CustomSelect from '../../components/CustomSelect.jsx'
-
-const STATUS_OPTIONS = [
-  { value: 'pending',   label: '🕐 Pending'   },
-  { value: 'confirmed', label: '✅ Confirmed'  },
-  { value: 'shipped',   label: '🚚 Shipped'    },
-  { value: 'delivered', label: '📦 Delivered'  },
-  { value: 'cancelled', label: '❌ Cancelled'  },
-]
 
 const STATUS_BADGE = {
   pending:   'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800',
@@ -20,23 +13,6 @@ const STATUS_BADGE = {
   cancelled: 'bg-gray-50 text-gray-500 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700',
 }
 
-const STATUS_LABEL = {
-  pending:   'Pending',
-  confirmed: 'Confirmed',
-  shipped:   'Out for delivery',
-  delivered: 'Delivered',
-  cancelled: 'Cancelled',
-}
-
-const FILTER_OPTIONS = [
-  { value: 'all',       label: 'All orders'   },
-  { value: 'pending',   label: '🕐 Pending'   },
-  { value: 'confirmed', label: '✅ Confirmed'  },
-  { value: 'shipped',   label: '🚚 Shipped'    },
-  { value: 'delivered', label: '📦 Delivered'  },
-  { value: 'cancelled', label: '❌ Cancelled'  },
-]
-
 function formatDate(str) {
   if (!str) return '—'
   return new Date(str).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -44,6 +20,7 @@ function formatDate(str) {
 
 export default function AdminOrders() {
   const { token } = useAuth()
+  const { t } = useLocale()
   const navigate = useNavigate()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
@@ -82,8 +59,26 @@ export default function AdminOrders() {
 
   const counts = orders.reduce((acc, o) => { acc[o.status] = (acc[o.status] || 0) + 1; return acc }, {})
 
-  if (loading) return <p className="text-sm text-[var(--muted)] py-10 text-center">Loading...</p>
-  if (!orders.length) return <p className="text-sm text-[var(--muted)] py-10 text-center">No orders yet.</p>
+  const labelMap = {
+    pending:   t('admin.orders.pending'),
+    confirmed: t('admin.orders.confirmed'),
+    shipped:   t('admin.orders.shipped'),
+    delivered: t('admin.orders.delivered'),
+    cancelled: t('admin.orders.cancelled'),
+  }
+
+  const statusLabel = {
+    pending:   t('order.statusPending'),
+    confirmed: t('order.statusConfirmed'),
+    shipped:   t('order.statusShipped'),
+    delivered: t('order.statusDelivered'),
+    cancelled: t('order.statusCancelled'),
+  }
+
+  const statusOptions = Object.keys(labelMap).map(k => ({ value: k, label: labelMap[k] }))
+
+  if (loading) return <p className="text-sm text-[var(--muted)] py-10 text-center">{t('admin.orders.loading')}</p>
+  if (!orders.length) return <p className="text-sm text-[var(--muted)] py-10 text-center">{t('admin.orders.noOrders')}</p>
 
   return (
     <div className="space-y-5">
@@ -92,7 +87,7 @@ export default function AdminOrders() {
           className={`text-xs font-semibold border rounded-full px-3 py-1 transition-colors ${
             filter === 'all' ? 'bg-[var(--brand)] text-white border-[var(--brand)]' : 'text-[var(--muted)] border-[var(--border)] hover:border-[var(--brand)]'
           }`}>
-          All · {orders.length}
+          {t('admin.orders.allOrders')} · {orders.length}
         </button>
         {Object.entries(counts).map(([status, count]) => (
           <button key={status} onClick={() => setFilter(filter === status ? 'all' : status)}
@@ -101,21 +96,21 @@ export default function AdminOrders() {
                 ? 'bg-[var(--brand)] text-white border-[var(--brand)]'
                 : STATUS_BADGE[status] || 'text-[var(--muted)] border-[var(--border)]'
             }`}>
-            {STATUS_LABEL[status] || status} · {count}
+            {statusLabel[status] || status} · {count}
           </button>
         ))}
       </div>
 
       <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-        placeholder="Search by order ID, name or phone..."
+        placeholder={t('admin.orders.searchPlaceholder')}
         className="w-full rounded-full border border-[var(--border)] px-5 py-2.5 text-sm bg-[var(--surface)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]" />
 
       <p className="text-xs text-[var(--muted)]">
-        Showing {filtered.length} of {orders.length} order{orders.length !== 1 ? 's' : ''}
+        {t('admin.orders.showing', { filtered: filtered.length, total: orders.length, s: orders.length !== 1 ? 's' : '' })}
       </p>
 
       {filtered.length === 0 ? (
-        <p className="text-sm text-[var(--muted)] text-center py-10">No orders match your search.</p>
+        <p className="text-sm text-[var(--muted)] text-center py-10">{t('admin.orders.noMatch')}</p>
       ) : (
         filtered.map(order => (
           <div key={order.id} className="surface-card">
@@ -123,7 +118,7 @@ export default function AdminOrders() {
               <div className="flex items-center gap-2.5">
                 <span className="font-mono text-[11px] text-[var(--muted)]">{order.id}</span>
                 <span className={`text-[11px] font-semibold border rounded-full px-2.5 py-0.5 ${STATUS_BADGE[order.status] || 'text-[var(--muted)] border-[var(--border)]'}`}>
-                  {STATUS_LABEL[order.status] || order.status}
+                  {statusLabel[order.status] || order.status}
                 </span>
               </div>
               <div className="flex items-center gap-3">
@@ -135,14 +130,14 @@ export default function AdminOrders() {
             <div className="p-5 space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)] mb-2">Customer</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)] mb-2">{t('admin.orders.customer')}</p>
                   <p className="text-sm font-semibold text-[var(--text)]">{order.customer?.name}</p>
                   <p className="text-xs text-[var(--muted)]">{order.customer?.phone}</p>
                   {order.customer?.email && <p className="text-xs text-[var(--muted)]">{order.customer.email}</p>}
                   <p className="text-xs text-[var(--muted)]">{order.customer?.address}, {order.customer?.city}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)] mb-2">Items</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)] mb-2">{t('admin.orders.items')}</p>
                   <ul className="space-y-1">
                     {(order.items || []).map((item, i) => (
                       <li key={i} className="flex justify-between text-xs text-[var(--muted)]">
@@ -156,12 +151,12 @@ export default function AdminOrders() {
 
               <div className="flex flex-wrap gap-4 pt-4 border-t border-[var(--border)] items-end">
                 <div className="flex-1 min-w-[160px]">
-                  <label className="block text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)] mb-1.5">Status</label>
-                  <CustomSelect value={order.status} onChange={val => handleUpdate(order.id, { status: val })} options={STATUS_OPTIONS} />
+                  <label className="block text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)] mb-1.5">{t('admin.orders.status')}</label>
+                  <CustomSelect value={order.status} onChange={val => handleUpdate(order.id, { status: val })} options={statusOptions} />
                 </div>
 
                 <div className="flex-1 min-w-[180px]">
-                  <label className="block text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)] mb-1.5">Est. delivery</label>
+                  <label className="block text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)] mb-1.5">{t('admin.orders.estDelivery')}</label>
                   <input type="date" defaultValue={order.estimated_delivery || ''}
                     min={new Date().toISOString().split('T')[0]}
                     onKeyDown={e => { if (e.key === 'Enter') e.target.blur() }}
@@ -176,7 +171,7 @@ export default function AdminOrders() {
                   )}
                 </div>
 
-                {saving[order.id] && <p className="text-xs text-[var(--muted)] animate-pulse">Saving...</p>}
+                {saving[order.id] && <p className="text-xs text-[var(--muted)] animate-pulse">{t('admin.orders.saving')}</p>}
               </div>
             </div>
           </div>

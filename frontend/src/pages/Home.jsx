@@ -4,6 +4,7 @@ import { Zap, Headphones, Smartphone, Watch, Plug, Cable, BatteryCharging, Shiel
 import { fetchProducts } from '../api.js'
 import ProductCard from '../components/ProductCard.jsx'
 import { LoadingState, ErrorState } from '../components/StatusStates.jsx'
+import { useLocale } from '../context/LocaleContext.jsx'
 
 const CATEGORY_ICONS = {
   'Phone Cases':       Smartphone,
@@ -19,6 +20,7 @@ const CATEGORY_ICONS = {
 }
 
 function HeroIllustration() {
+  const { t } = useLocale()
   const orbitIcons = [
     { Icon: Zap,        angle: 45,  size: 'w-10 h-10 sm:w-12 sm:h-12', iconSize: 16, tint: 'bg-[var(--accent)]/10 border-[var(--accent)]/20', color: 'text-[var(--accent)]', duration: '30s' },
     { Icon: Headphones, angle: 135, size: 'w-8 h-8 sm:w-10 sm:h-10',   iconSize: 14, tint: 'bg-[var(--brand-dim)] border-[var(--brand)]/10',  color: 'text-[var(--brand)]',  duration: '38s' },
@@ -68,7 +70,7 @@ function HeroIllustration() {
       {/* Logo — stays completely static */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="w-36 h-36 sm:w-44 sm:h-44 lg:w-56 lg:h-56 rounded-full border border-[var(--border)] flex items-center justify-center bg-[var(--surface)]/60 backdrop-blur-sm">
-          <img src="/logo.jpg" alt="Tic Toc Xpoint" className="w-20 h-20 sm:w-24 sm:h-24 lg:w-36 lg:h-36 rounded-2xl object-cover shadow-lg" />
+          <img src="/logo.jpg" alt={t('brand.tictoc') + ' ' + t('brand.xpoint')} className="w-20 h-20 sm:w-24 sm:h-24 lg:w-36 lg:h-36 rounded-2xl object-cover shadow-lg" />
         </div>
       </div>
 
@@ -93,6 +95,7 @@ function HeroIllustration() {
 }
 
 export default function Home() {
+  const { t } = useLocale()
   const [products, setProducts] = useState([])
   const [status, setStatus] = useState('loading')
   const load = () => {
@@ -111,19 +114,18 @@ export default function Home() {
       <section className="relative overflow-hidden border-b border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-12 pb-16 sm:pt-20 sm:pb-28 grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <div className="animate-fade-up order-2 lg:order-1">
-            <h1 className="font-heading text-[2.25rem] sm:text-[3rem] lg:text-[3.5rem] font-bold leading-[1.08] tracking-[-0.025em] text-[var(--text)] mb-5">
-              Protection meets <span className="text-[var(--brand)]">precision</span>
-            </h1>
+            <h1 className="font-heading text-[2.25rem] sm:text-[3rem] lg:text-[3.5rem] font-bold leading-[1.08] tracking-[-0.025em] text-[var(--text)] mb-5" dangerouslySetInnerHTML={{ __html: t('home.heroTitle') }} />
             <p className="text-base sm:text-lg text-[var(--muted)] max-w-md leading-relaxed">
-              Cases, chargers, audio, and more meticulously selected for those who expect more from their everyday carry.
+              {t('home.heroDescXpoint', { brand: t('brand.xpoint') })} <br className="hidden sm:block" />
+              {t('home.heroDescTictoc', { brand: t('brand.tictoc') })}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/shop" className="btn-primary px-7 py-3.5 text-[15px]">
-                Explore the collection
+                {t('home.exploreStores')}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </Link>
               <Link to="/about" className="btn-secondary px-7 py-3.5 text-[15px]">
-                Our story
+                {t('home.ourStory')}
               </Link>
             </div>
           </div>
@@ -133,8 +135,8 @@ export default function Home() {
         </div>
       </section>
 
-      {status === 'loading' && <LoadingState label="Loading collection..." />}
-      {status === 'error' && <ErrorState message="Couldn't load products." onRetry={load} />}
+      {status === 'loading' && <LoadingState label={t('home.loading')} />}
+      {status === 'error' && <ErrorState message={t('home.loadError')} onRetry={load} />}
 
       {status === 'ready' && (
         <>
@@ -142,11 +144,11 @@ export default function Home() {
             <section className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
               <div className="flex items-end justify-between mb-10">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--muted)] mb-2">Browse</p>
-                  <h2 className="text-heading-xl text-[var(--text)]">Shop by category</h2>
+                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--muted)] mb-2">{t('home.browse')}</p>
+                  <h2 className="text-heading-xl text-[var(--text)]">{t('home.shopByCategory')}</h2>
                 </div>
                 <Link to="/shop" className="hidden sm:inline-flex text-sm font-medium text-[var(--brand)] hover:underline">
-                  View all →
+                  {t('home.viewAll')}
                 </Link>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
@@ -158,7 +160,7 @@ export default function Home() {
                       <div className="w-14 h-14 rounded-2xl bg-[var(--brand-dim)] flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-[var(--brand)]/15">
                         <CategoryIcon size={24} strokeWidth={1.75} className="text-[var(--brand)]" />
                       </div>
-                      <span className="text-[13px] sm:text-sm font-semibold text-[var(--text)] tracking-tight leading-tight">{cat}</span>
+                      <span className="text-[13px] sm:text-sm font-semibold text-[var(--text)] tracking-tight leading-tight">{t('cat.' + cat) || cat}</span>
                     </Link>
                   )
                 })}
@@ -171,11 +173,11 @@ export default function Home() {
               <div className="max-w-7xl mx-auto px-5 sm:px-8">
                 <div className="flex items-end justify-between mb-10">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--muted)] mb-2">Popular right now</p>
-                    <h2 className="text-heading text-[var(--text)]">Bestsellers</h2>
+                    <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--muted)] mb-2">{t('home.popular')}</p>
+                    <h2 className="text-heading text-[var(--text)]">{t('home.bestsellers')}</h2>
                   </div>
                   <Link to="/shop" className="hidden sm:block text-sm font-medium text-[var(--brand)] hover:underline">
-                    View all →
+                    {t('home.viewAll')}
                   </Link>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
@@ -187,14 +189,14 @@ export default function Home() {
 
           <section className="max-w-3xl mx-auto px-5 sm:px-8 py-16 sm:py-28 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--accent-dim)] border border-[var(--accent)]/10 mb-6">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--accent)]">Why Choose Us</span>
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--accent)]">{t('home.whyUs')}</span>
             </div>
-            <h2 className="text-heading text-[var(--text)] mb-4">Built for people who notice the details</h2>
+            <h2 className="text-heading text-[var(--text)] mb-4">{t('home.whyUsTitle')}</h2>
             <p className="text-sm text-[var(--muted)] max-w-lg mx-auto leading-relaxed">
-              Every product we stock is chosen for its quality, design, and reliability. We don't sell everything, just the things that earn their place.
+              {t('home.whyUsDesc')}
             </p>
             <Link to="/about" className="inline-flex items-center gap-1.5 mt-8 text-sm font-semibold text-[var(--brand)] hover:text-[var(--hot)] transition-colors">
-              Learn more about us
+              {t('home.learnMore')}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </Link>
           </section>

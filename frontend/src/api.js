@@ -31,9 +31,12 @@ async function request(path, { method = 'GET', token, body } = {}) {
   return res.json()
 }
 
-export const fetchProducts      = ()       => request('/api/products')
+export const fetchProducts      = (store) => request('/api/products' + (store ? '?store=' + encodeURIComponent(store) : ''))
 export const fetchProduct       = (id)     => request(`/api/products/${id}`)
-export const fetchCategories    = ()       => request('/api/categories')
+export const fetchCategories    = async (store) => {
+  const data = await request('/api/categories' + (store ? '?store=' + encodeURIComponent(store) : ''))
+  return data.map(c => c.name || c)
+}
 
 export const fetchOrder         = (id)     => request(`/api/orders/${id}`)
 export const fetchOrdersByPhone = (phone)  => request(`/api/orders?phone=${encodeURIComponent(phone)}`)
@@ -61,6 +64,7 @@ export const fetchComplaints       = (token)              => request('/api/admin
 export const updateComplaintStatus = (token, id, status)  => request(`/api/admin/complaints/${id}`,   { method: 'PATCH', token, body: { status } })
 
 export const submitReturn       = (data)               => request('/api/returns',              { method: 'POST', body: data })
+export const cancelReturn       = (id, order_id)       => request(`/api/returns/${id}/cancel`, { method: 'POST', body: { order_id } })
 export const fetchReturns       = (token)              => request('/api/admin/returns',         { token })
 export const updateReturnStatus = (token, id, status)  => request(`/api/admin/returns/${id}`,  { method: 'PATCH', token, body: { status } })
 

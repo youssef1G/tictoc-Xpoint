@@ -76,12 +76,21 @@ function stripProtectedFields(obj, fields) {
   return clean
 }
 
-export async function getAllProducts() {
-  const { data, error } = await getSupabase()
+export async function getAllProducts(store) {
+  let query = getSupabase()
     .from('products')
     .select('*')
     .order('id')
 
+  if (store) {
+    if (store === 'xpoint') {
+      query = query.or('store.eq.xpoint,store.is.null')
+    } else {
+      query = query.eq('store', store)
+    }
+  }
+
+  const { data, error } = await query
   if (error) throw error
   return data
 }
@@ -127,14 +136,23 @@ export async function deleteProduct(id) {
   if (error) throw error
 }
 
-export async function getAllCategories() {
-  const { data, error } = await getSupabase()
+export async function getAllCategories(store) {
+  let query = getSupabase()
     .from('categories')
-    .select('name')
+    .select('name, store')
     .order('name')
 
+  if (store) {
+    if (store === 'xpoint') {
+      query = query.or('store.eq.xpoint,store.is.null')
+    } else {
+      query = query.eq('store', store)
+    }
+  }
+
+  const { data, error } = await query
   if (error) throw error
-  return data.map(r => r.name)
+  return data.map(r => ({ name: r.name, store: r.store || 'xpoint' }))
 }
 
 export async function listAdmins() {
@@ -489,6 +507,19 @@ export async function createReturnRequest({ order_id, reason, details }) {
     details: details || null,
     status: 'pending',
   }))
+}
+
+export async function getReturnRequestById(id) {
+  const { data, error } = await getSupabase()
+    .from('return_requests')
+    .select('*')
+    .eq('id', id)
+    .single()
+  if (error) {
+    if (isNotFoundError(error)) return null
+    throw error
+  }
+  return data
 }
 
 export async function getAllReturnRequests() {

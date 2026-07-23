@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useLocale } from '../context/LocaleContext.jsx'
 export default function ProductGallery({ images = [], image, name }) {
+  const { t } = useLocale()
   const gallery = images && images.length > 0 ? images : (image ? [image] : [])
   const [active, setActive] = useState(0)
-  if (gallery.length === 0) return <div className="aspect-square rounded-2xl bg-[var(--muted)]/5 flex items-center justify-center text-xs text-[var(--muted)]">No image</div>
+  if (gallery.length === 0) return <div className="aspect-square rounded-2xl bg-[var(--muted)]/5 flex items-center justify-center text-xs text-[var(--muted)]">{t('gallery.noImage')}</div>
   return (
     <div>
       <div className="aspect-square rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--muted)]/5 mb-3">

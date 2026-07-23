@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { fetchProducts, deleteProduct, updateProduct } from '../../api.js'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useLocale } from '../../context/LocaleContext.jsx'
 import { LoadingState, ErrorState } from '../../components/StatusStates.jsx'
+import CustomSelect from '../../components/CustomSelect.jsx'
 
 function SortIcon({ dir }) {
   return (
@@ -13,6 +15,7 @@ function SortIcon({ dir }) {
 }
 
 export default function AdminProducts() {
+  const { t } = useLocale()
   const { token, logout } = useAuth()
   const navigate = useNavigate()
   const [products, setProducts] = useState([])
@@ -24,6 +27,7 @@ export default function AdminProducts() {
   const [savingStockId, setSavingStockId] = useState(null)
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
+  const [storeFilter, setStoreFilter] = useState('all')
   const [sort, setSort] = useState({ key: '', dir: '' })
 
   const load = () => {
@@ -53,6 +57,9 @@ export default function AdminProducts() {
     if (categoryFilter !== 'all') {
       result = result.filter(p => p.category === categoryFilter)
     }
+    if (storeFilter !== 'all') {
+      result = result.filter(p => p.store === storeFilter)
+    }
     if (sort.key) {
       result.sort((a, b) => {
         const av = a[sort.key], bv = b[sort.key]
@@ -76,7 +83,7 @@ export default function AdminProducts() {
   }
 
   const handleDelete = async (id, name) => {
-    if (!window.confirm(`Delete "${name}"?`)) return
+    if (!window.confirm(t('admin.products.deleteConfirm', { name }))) return
     setDeletingId(id)
     try { await deleteProduct(token, id); setProducts(prev => prev.filter(p => p.id !== id)) }
     catch (err) { if (!handleAuthError(err)) setError(err.message) }
@@ -99,10 +106,10 @@ export default function AdminProducts() {
   }
 
   function stockBadge(stock) {
-    if (stock == null) return <span className="text-[11px] text-[var(--muted)]">∞</span>
-    if (stock === 0) return <span className="text-[11px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-full px-2 py-0.5">Out</span>
-    if (stock <= 10) return <span className="text-[11px] font-semibold bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 rounded-full px-2 py-0.5">{stock} left</span>
-    return <span className="text-[11px] text-[var(--muted)]">{stock} in stock</span>
+    if (stock == null) return <span className="text-[11px] text-[var(--muted)]">{t('admin.products.unlimited')}</span>
+    if (stock === 0) return <span className="text-[11px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-full px-2 py-0.5">{t('admin.products.out')}</span>
+    if (stock <= 10) return <span className="text-[11px] font-semibold bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 rounded-full px-2 py-0.5">{t('admin.products.leftStock', { count: stock })}</span>
+    return <span className="text-[11px] text-[var(--muted)]">{t('admin.products.inStock', { count: stock })}</span>
   }
 
   function SortTh({ label, sortKey }) {
@@ -115,14 +122,14 @@ export default function AdminProducts() {
     )
   }
 
-  if (status === 'loading') return <LoadingState label="Loading products..." />
-  if (status === 'error') return <ErrorState message="Couldn't load products" onRetry={load} />
+  if (status === 'loading') return <LoadingState label={t('store.loading')} />
+  if (status === 'error') return <ErrorState message={t('store.loadError')} onRetry={load} />
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-heading text-xl font-bold text-[var(--text)]">Products</h2>
-        <p className="text-xs text-[var(--muted)] mt-1">Manage your product catalog</p>
+        <h2 className="font-heading text-xl font-bold text-[var(--text)]">{t('admin.products.title')}</h2>
+        <p className="text-xs text-[var(--muted)] mt-1">{t('admin.products.subtitle')}</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -131,17 +138,26 @@ export default function AdminProducts() {
             <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
           </svg>
           <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="Search products..."
+            placeholder={t('admin.products.searchPlaceholder')}
             className="w-full text-sm bg-[var(--surface)] border border-[var(--border)] rounded-xl pl-9 pr-4 py-2.5 text-[var(--text)] placeholder:text-[var(--muted)]/50 focus:outline-none focus:border-[var(--brand)]" />
         </div>
-        <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}
-          className="text-sm bg-[var(--surface)] border border-[var(--border)] rounded-xl px-3 py-2.5 text-[var(--text)] focus:outline-none focus:border-[var(--brand)]">
-          <option value="all">All categories</option>
-          {categories.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
+        <div className="w-[180px]">
+          <CustomSelect value={categoryFilter} onChange={setCategoryFilter}
+            options={[{ value: 'all', label: t('admin.products.allCategories') }, ...categories.map(c => ({ value: c, label: t('cat.' + c) || c }))]}
+            placeholder={t('admin.products.allCategories')} />
+        </div>
+        <div className="w-[140px]">
+          <CustomSelect value={storeFilter} onChange={setStoreFilter}
+            options={[
+              { value: 'all', label: t('admin.products.allStores') },
+              { value: 'xpoint', label: t('admin.products.xpoint') },
+              { value: 'tictoc', label: t('admin.products.tictoc') },
+            ]}
+            placeholder={t('admin.products.allStores')} />
+        </div>
         <div className="flex-1" />
-        <p className="text-xs text-[var(--muted)] self-center">{filtered.length} of {products.length} product{products.length !== 1 ? 's' : ''}</p>
-        <Link to="/admin/products/new" className="btn-primary text-xs">+ Add product</Link>
+        <p className="text-xs text-[var(--muted)] self-center">{t('admin.products.count', { count: filtered.length, total: products.length, s: products.length !== 1 ? 's' : '' })}</p>
+        <Link to="/admin/products/new" className="btn-primary text-xs">{t('admin.products.addProduct')}</Link>
       </div>
 
       {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{error}</p>}
@@ -153,12 +169,12 @@ export default function AdminProducts() {
               <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-[var(--text)] mb-1">No products found</p>
+          <p className="text-sm font-medium text-[var(--text)] mb-1">{t('admin.products.noProducts')}</p>
           <p className="text-xs text-[var(--muted)] mb-4">
-            {search || categoryFilter !== 'all' ? 'Try a different search or filter.' : 'Get started by adding your first product.'}
+            {search || categoryFilter !== 'all' ? t('admin.products.noFilter') : t('admin.products.firstProduct')}
           </p>
           {!search && categoryFilter === 'all' && (
-            <Link to="/admin/products/new" className="btn-primary text-xs">+ Add product</Link>
+            <Link to="/admin/products/new" className="btn-primary text-xs">{t('admin.products.addProduct')}</Link>
           )}
         </div>
       ) : (
@@ -166,11 +182,12 @@ export default function AdminProducts() {
           <table className="w-full text-sm">
             <thead className="bg-[var(--muted)]/5 text-left">
               <tr>
-                <SortTh label="Product" sortKey="name" />
-                <SortTh label="Category" sortKey="category" />
-                <SortTh label="Price" sortKey="price" />
-                <SortTh label="Stock" sortKey="stock" />
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] text-right">Actions</th>
+                <SortTh label={t('admin.products.product')} sortKey="name" />
+                <SortTh label={t('admin.products.store')} sortKey="store" />
+                <SortTh label={t('admin.products.category')} sortKey="category" />
+                <SortTh label={t('admin.products.price')} sortKey="price" />
+                <SortTh label={t('admin.products.stock')} sortKey="stock" />
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] text-right">{t('admin.products.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -186,8 +203,13 @@ export default function AdminProducts() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-xs text-[var(--muted)]">{p.category}</td>
-                  <td className="px-4 py-3 text-xs font-semibold text-[var(--text)]">EGP {Number(p.price).toFixed(0)}</td>
+                  <td className="px-4 py-3">
+                    <span className={`text-[11px] font-semibold ${p.store === 'tictoc' ? 'text-[var(--accent)]' : 'text-[var(--brand)]'}`}>
+                      {p.store === 'tictoc' ? t('admin.products.tictoc') : t('admin.products.xpoint')}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-[var(--muted)]">{t('cat.' + p.category) || p.category}</td>
+                  <td className="px-4 py-3 text-xs font-semibold text-[var(--text)]">{t('currency.egp', { amount: Number(p.price).toFixed(0) })}</td>
                   <td className="px-4 py-3">
                     {editingStockId === p.id ? (
                       <div className="flex items-center gap-2">
@@ -216,12 +238,14 @@ export default function AdminProducts() {
                     )}
                   </td>
                   <td className="px-4 py-3 text-right whitespace-nowrap">
-                    <Link to={`/admin/products/${p.id}/edit`}
-                      className="text-xs font-medium text-[var(--brand)] hover:underline mr-4">Edit</Link>
-                    <button onClick={() => handleDelete(p.id, p.name)} disabled={deletingId === p.id}
-                      className="text-xs text-[var(--muted)] hover:text-red-500 transition-colors disabled:opacity-50">
-                      {deletingId === p.id ? 'Deleting...' : 'Delete'}
-                    </button>
+                    <div className="flex items-center justify-end gap-4">
+                      <Link to={`/admin/products/${p.id}/edit`}
+                        className="text-xs font-medium text-[var(--brand)] hover:underline">{t('admin.products.edit')}</Link>
+                      <button onClick={() => handleDelete(p.id, p.name)} disabled={deletingId === p.id}
+                        className="text-xs text-[var(--muted)] hover:text-red-500 transition-colors disabled:opacity-50">
+                        {deletingId === p.id ? t('admin.products.deleting') : t('admin.products.delete')}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

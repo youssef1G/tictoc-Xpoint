@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useLocale } from '../../context/LocaleContext.jsx'
 import { fetchCustomers } from '../../api.js'
 import { LoadingState } from '../../components/StatusStates.jsx'
 
@@ -10,6 +11,7 @@ function formatDate(str) {
 
 export default function AdminCustomers() {
   const { token } = useAuth()
+  const { t } = useLocale()
   const [customers, setCustomers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -32,35 +34,35 @@ export default function AdminCustomers() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-heading text-xl font-bold text-[var(--text)]">Customers</h2>
-        <p className="text-xs text-[var(--muted)] mt-1">Your customer base</p>
+        <h2 className="font-heading text-xl font-bold text-[var(--text)]">{t('admin.customers.title')}</h2>
+        <p className="text-xs text-[var(--muted)] mt-1">{t('admin.customers.subtitle')}</p>
       </div>
 
       <form onSubmit={handleSearch} className="flex gap-2">
         <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-          placeholder="Search by name or phone..."
+          placeholder={t('admin.customers.searchPlaceholder')}
           className="flex-1 max-w-xs text-sm bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-[var(--text)] placeholder:text-[var(--muted)]/50 focus:outline-none focus:border-[var(--brand)]" />
-        <button type="submit" className="btn-primary text-xs px-5 py-2.5">Search</button>
+        <button type="submit" className="btn-primary text-xs px-5 py-2.5">{t('admin.customers.search')}</button>
       </form>
 
-      {loading ? <LoadingState label="Loading customers..." /> : (
+      {loading ? <LoadingState label={t('admin.customers.loading')} /> : (
         <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
           <table className="w-full text-sm">
             <thead className="bg-[var(--muted)]/5 text-left">
               <tr>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">Name</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">Phone</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">Orders</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">Total Spent</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">Last Order</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">Joined</th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.name')}</th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.phone')}</th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.orders')}</th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.totalSpent')}</th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.lastOrder')}</th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.joined')}</th>
               </tr>
             </thead>
             <tbody>
               {customers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-4 py-10 text-center text-sm text-[var(--muted)]">
-                    No customers found.
+                    {t('admin.customers.noCustomers')}
                   </td>
                 </tr>
               ) : customers.map(c => (
