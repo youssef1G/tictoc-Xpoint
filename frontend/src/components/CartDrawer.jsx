@@ -17,7 +17,9 @@ export default function CartDrawer() {
       />
 
       <aside
-        className={`fixed top-0 h-full w-full sm:w-[420px] bg-[var(--surface)] z-[51] shadow-xl transition-transform duration-300 flex flex-col`}
+        className={`fixed top-0 h-full w-full sm:w-[420px] bg-[var(--surface)] z-[51] shadow-xl transition-transform duration-300 flex flex-col ${
+          isCartOpen ? '' : 'invisible pointer-events-none'
+        }`}
         style={{
           [lang === 'ar' ? 'left' : 'right']: 0,
           [lang === 'ar' ? 'right' : 'left']: 'auto',
