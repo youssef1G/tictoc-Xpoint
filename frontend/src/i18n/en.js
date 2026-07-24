@@ -247,6 +247,7 @@ export default {
   'tracking.cod': 'Cash on Delivery',
   'tracking.address': 'Delivery address',
   'tracking.total': 'Total',
+  'tracking.shipping': 'Shipping',
   'tracking.refresh': '↻ Refresh',
   'tracking.backOrders': '← My orders',
 
@@ -272,6 +273,7 @@ export default {
   'admin.storefront': 'Storefront',
   'admin.logout': 'Log out',
   'admin.accessTitle': 'Tic Toc Xpoint Admin',
+  'admin.accessSubtitle': 'Sign in to your dashboard',
 
   // AdminDashboard
   'admin.dashboard.title': 'Dashboard',

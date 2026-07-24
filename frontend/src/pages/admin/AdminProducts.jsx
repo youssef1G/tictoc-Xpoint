@@ -184,17 +184,17 @@ export default function AdminProducts() {
             <thead className="bg-[var(--muted)]/5 text-left">
               <tr>
                 <SortTh label={t('admin.products.product')} sortKey="name" />
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] cursor-pointer select-none hover:text-[var(--text)] transition-colors hidden md:table-cell" onClick={() => toggleSort('store')}>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] cursor-pointer select-none hover:text-[var(--text)] transition-colors hidden md:table-cell" onClick={() => toggleSort('store')}>
                   {t('admin.products.store')}{sort.key === 'store' ? <SortIcon dir={sort.dir} /> : <SortIcon dir="" />}
                 </th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] cursor-pointer select-none hover:text-[var(--text)] transition-colors hidden md:table-cell" onClick={() => toggleSort('category')}>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] cursor-pointer select-none hover:text-[var(--text)] transition-colors hidden md:table-cell" onClick={() => toggleSort('category')}>
                   {t('admin.products.category')}{sort.key === 'category' ? <SortIcon dir={sort.dir} /> : <SortIcon dir="" />}
                 </th>
                 <SortTh label={t('admin.products.price')} sortKey="price" />
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] cursor-pointer select-none hover:text-[var(--text)] transition-colors hidden sm:table-cell" onClick={() => toggleSort('stock')}>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] cursor-pointer select-none hover:text-[var(--text)] transition-colors hidden sm:table-cell" onClick={() => toggleSort('stock')}>
                   {t('admin.products.stock')}{sort.key === 'stock' ? <SortIcon dir={sort.dir} /> : <SortIcon dir="" />}
                 </th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] text-right">{t('admin.products.actions')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] text-right">{t('admin.products.actions')}</th>
               </tr>
             </thead>
             <tbody>

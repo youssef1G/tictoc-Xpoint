@@ -54,14 +54,14 @@ export default function OrderTracking() {
     <div className="max-w-2xl mx-auto px-5 sm:px-8 py-10 sm:py-14 space-y-8">
       <div>
         <p className="text-xs font-mono text-[var(--muted)] mb-1">{order.id}</p>
-        <h1 className="text-heading-lg text-[var(--text)]">Track your order</h1>
+        <h1 className="text-heading-lg text-[var(--text)]">{t('tracking.title')}</h1>
       </div>
 
       {order.estimated_delivery && !cancelled && (
         <div className="surface-card p-5 flex items-center gap-4">
           <span className="text-2xl">{'📅'}</span>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--brand)]">Estimated delivery</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--brand)]">{t('tracking.estimatedDelivery')}</p>
             <p className="font-heading text-lg font-semibold text-[var(--text)]">{formatDate(order.estimated_delivery)}</p>
           </div>
         </div>
@@ -96,23 +96,23 @@ export default function OrderTracking() {
       ) : (
         <div className="surface-card p-5 text-center">
           <p className="text-2xl mb-2">{'❌'}</p>
-          <p className="font-semibold text-[var(--text)]">This order was cancelled</p>
+          <p className="font-semibold text-[var(--text)]">{t('tracking.cancelled')}</p>
         </div>
       )}
 
       <div className="surface-card p-5 space-y-4">
-        <h2 className="font-heading text-base font-semibold text-[var(--text)]">Order details</h2>
+        <h2 className="font-heading text-base font-semibold text-[var(--text)]">{t('tracking.details')}</h2>
         <div className="grid sm:grid-cols-2 gap-2 text-xs">
           <div>
-            <p className="text-[var(--muted)] mb-0.5">Placed on</p>
+            <p className="text-[var(--muted)] mb-0.5">{t('tracking.placedOn')}</p>
             <p className="text-[var(--text)]">{formatDate(order.created_at)}</p>
           </div>
           <div>
-            <p className="text-[var(--muted)] mb-0.5">Payment</p>
-            <p className="text-[var(--text)]">{order.type === 'cod' ? 'Cash on Delivery' : order.type}</p>
+            <p className="text-[var(--muted)] mb-0.5">{t('tracking.payment')}</p>
+            <p className="text-[var(--text)]">{order.type === 'cod' ? t('tracking.cod') : order.type}</p>
           </div>
           <div className="sm:col-span-2">
-            <p className="text-[var(--muted)] mb-0.5">Delivery address</p>
+            <p className="text-[var(--muted)] mb-0.5">{t('tracking.address')}</p>
             <p className="text-[var(--text)]">{order.customer?.address}, {order.customer?.city}</p>
           </div>
         </div>
@@ -125,12 +125,12 @@ export default function OrderTracking() {
           ))}
           {computedShipping > 0 && (
             <div className="flex justify-between text-xs text-[var(--muted)]">
-              <span>Shipping</span>
+              <span>{t('tracking.shipping')}</span>
               <span>EGP {Number(computedShipping).toFixed(0)}</span>
             </div>
           )}
           <div className="flex justify-between text-sm font-bold text-[var(--text)] pt-2 border-t border-[var(--border)]">
-            <span>Total</span>
+            <span>{t('tracking.total')}</span>
             <span>EGP {Number(order.total).toFixed(0)}</span>
           </div>
         </div>
@@ -139,11 +139,11 @@ export default function OrderTracking() {
       <div className="flex gap-3">
         <button onClick={load}
           className="text-xs font-medium text-[var(--muted)] border border-[var(--border)] rounded-full px-4 py-2 hover:text-[var(--text)] transition-colors">
-          ↻ Refresh
+          {t('tracking.refresh')}
         </button>
         <Link to="/my-orders"
           className="text-xs font-medium text-[var(--muted)] border border-[var(--border)] rounded-full px-4 py-2 hover:text-[var(--text)] transition-colors">
-          ← My orders
+          {t('tracking.backOrders')}
         </Link>
       </div>
     </div>

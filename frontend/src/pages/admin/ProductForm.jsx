@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { ChevronDown, Search, Plus, X, Check, Infinity as InfinityIcon } from 'lucide-react'
 import { fetchProduct, fetchCategories, createProduct, updateProduct, deleteProduct } from '../../api.js'
@@ -45,6 +45,7 @@ export default function ProductForm() {
   const [unlimitedStock, setUnlimitedStock] = useState(false)
   const [catOpen, setCatOpen] = useState(false)
   const [catQuery, setCatQuery] = useState('')
+  const [catHighlight, setCatHighlight] = useState(0)
   const catRef = useRef(null)
 
   const isDirty = JSON.stringify(form) !== JSON.stringify(savedForm)
@@ -90,12 +91,19 @@ export default function ProductForm() {
 
   const catShowCreate = catQuery && !categories.some(c => c.toLowerCase() === catQuery.toLowerCase())
 
-  const selectCategory = (c) => {
+  const catNavItems = useMemo(() => {
+    const base = catQuery ? filteredCats : categories
+    if (catShowCreate) return [...base, '__create__']
+    return base
+  }, [categories, filteredCats, catQuery, catShowCreate])
+
+  const selectCategory = useCallback((c) => {
     setForm(p => ({ ...p, category: c }))
     setCatQuery('')
     setCatOpen(false)
+    setCatHighlight(0)
     setErrors(p => ({ ...p, category: '' }))
-  }
+  }, [])
 
   const handleCatKeyDown = e => {
     if (!catOpen) return

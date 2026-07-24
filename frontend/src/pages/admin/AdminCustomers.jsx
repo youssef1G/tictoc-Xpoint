@@ -50,12 +50,12 @@ export default function AdminCustomers() {
           <table className="w-full text-sm">
             <thead className="bg-[var(--muted)]/5 text-left">
               <tr>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.name')}</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.phone')}</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.customers.orders')}</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.customers.totalSpent')}</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.customers.lastOrder')}</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden md:table-cell">{t('admin.customers.joined')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.name')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.phone')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.customers.orders')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.customers.totalSpent')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.customers.lastOrder')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden md:table-cell">{t('admin.customers.joined')}</th>
               </tr>
             </thead>
             <tbody>

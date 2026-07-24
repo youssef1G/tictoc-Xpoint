@@ -429,10 +429,31 @@ export async function getCustomers(search = '') {
 }
 
 export async function decrementStock(id, quantity) {
-  const { error } = await getSupabase().rpc('decrement_stock', { p_id: id, p_qty: quantity })
-  if (error) {
-    console.error(`Failed to decrement stock for product ${id}:`, error)
-    throw error
+  const { data: product, error: fetchError } = await getSupabase()
+    .from('products')
+    .select('stock')
+    .eq('id', id)
+    .single()
+
+  if (fetchError) {
+    console.error(`Failed to fetch product ${id} for stock decrement:`, fetchError)
+    throw fetchError
+  }
+
+  if (product.stock === null) return
+
+  if (product.stock < quantity) {
+    throw new Error(`Not enough stock for product ${id}: have ${product.stock}, need ${quantity}`)
+  }
+
+  const { error: updateError } = await getSupabase()
+    .from('products')
+    .update({ stock: product.stock - quantity })
+    .eq('id', id)
+
+  if (updateError) {
+    console.error(`Failed to decrement stock for product ${id}:`, updateError)
+    throw updateError
   }
 }
 

@@ -64,7 +64,6 @@ export const fetchComplaints       = (token)              => request('/api/admin
 export const updateComplaintStatus = (token, id, status)  => request(`/api/admin/complaints/${id}`,   { method: 'PATCH', token, body: { status } })
 
 export const submitReturn       = (data)               => request('/api/returns',              { method: 'POST', body: data })
-export const cancelReturn       = (id, order_id)       => request(`/api/returns/${id}/cancel`, { method: 'POST', body: { order_id } })
 export const fetchReturns       = (token)              => request('/api/admin/returns',         { token })
 export const updateReturnStatus = (token, id, status)  => request(`/api/admin/returns/${id}`,  { method: 'PATCH', token, body: { status } })
 

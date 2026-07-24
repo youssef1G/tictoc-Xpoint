@@ -49,17 +49,17 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
+                <a href="https://www.instagram.com/tictocxpoint" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
                   Instagram
                 </a>
               </li>
               <li>
-                <a href="#" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
+                <a href="https://www.facebook.com/tictocxpoint" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
                   Facebook
                 </a>
               </li>
               <li>
-                <a href="#" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
+                <a href="https://www.tiktok.com/@tictocxpoint" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
                   TikTok
                 </a>
               </li>

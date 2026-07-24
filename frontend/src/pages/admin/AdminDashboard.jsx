@@ -108,10 +108,10 @@ export default function AdminDashboard() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left">
-                    <th className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.dashboard.id')}</th>
-                    <th className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.dashboard.customer')}</th>
-                    <th className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.dashboard.total')}</th>
-                    <th className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.dashboard.status')}</th>
+                    <th scope="col" className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.dashboard.id')}</th>
+                    <th scope="col" className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.dashboard.customer')}</th>
+                    <th scope="col" className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.dashboard.total')}</th>
+                    <th scope="col" className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.dashboard.status')}</th>
                   </tr>
                 </thead>
                 <tbody>

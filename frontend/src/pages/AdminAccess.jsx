@@ -28,7 +28,7 @@ export default function AdminAccess() {
         <div className="text-center mb-8">
           <img src="/logo.jpg" alt={t('brand.tictoc') + ' ' + t('brand.xpoint')} className="w-14 h-14 rounded-xl object-cover mx-auto mb-4" />
           <h1 className="font-heading text-[22px] font-bold tracking-tight text-[var(--text)]">Admin</h1>
-          <p className="text-xs text-[var(--muted)] mt-1">Sign in to your dashboard</p>
+          <p className="text-xs text-[var(--muted)] mt-1">{t('admin.accessSubtitle')}</p>
         </div>
         <form onSubmit={handleSubmit} className="surface-card p-6 space-y-4">
           <div>

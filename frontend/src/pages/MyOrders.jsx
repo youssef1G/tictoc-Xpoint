@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchOrdersByPhone, fetchOrder, submitReturn, cancelReturn } from '../api.js'
+import { fetchOrdersByPhone, fetchOrder, submitReturn } from '../api.js'
 import CustomSelect from '../components/CustomSelect.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
 
@@ -117,7 +117,6 @@ function ReturnForm({ orderId, onClose, onSuccess }) {
 function OrderCard({ order, returningId, setReturningId }) {
   const { t } = useLocale()
   const [submittedReturnId, setSubmittedReturnId] = useState(null)
-  const [cancelling, setCancelling] = useState(false)
   const STATUS_LABEL = {
     pending:   t('order.statusPending'),
     confirmed: t('order.statusConfirmed'),
@@ -126,14 +125,7 @@ function OrderCard({ order, returningId, setReturningId }) {
     cancelled: t('order.statusCancelled'),
   }
 
-  async function handleCancel() {
-    if (submittedReturnId) {
-      setCancelling(true)
-      try {
-        await cancelReturn(submittedReturnId, order.id)
-      } catch (_) {}
-      setCancelling(false)
-    }
+  function handleCancel() {
     setSubmittedReturnId(null)
     setReturningId(null)
   }
@@ -174,8 +166,7 @@ function OrderCard({ order, returningId, setReturningId }) {
         </Link>
         {order.status === 'delivered' && (
           <button onClick={returningId === order.id ? handleCancel : () => setReturningId(order.id)}
-            disabled={cancelling}
-            className={`text-xs font-medium border rounded-full px-4 py-1.5 transition-colors disabled:opacity-50 ${
+            className={`text-xs font-medium border rounded-full px-4 py-1.5 transition-colors ${
               returningId === order.id
                 ? 'border-[var(--brand)] text-[var(--brand)] bg-[var(--brand-dim)]'
                 : 'border-[var(--border)] text-[var(--muted)] hover:border-[var(--brand)]/30'

@@ -3,7 +3,7 @@ import { useCart } from '../context/CartContext.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
 
 export default function CartDrawer() {
-  const { t } = useLocale()
+  const { t, lang } = useLocale()
   const { items, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, subtotal } = useCart()
 
   return (
@@ -17,10 +17,12 @@ export default function CartDrawer() {
       />
 
       <aside
-        className={`fixed top-0 h-full w-full sm:w-[420px] bg-[var(--surface)] z-[51] shadow-xl transition-transform duration-300 flex flex-col ${
-          isCartOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-        style={{ right: 0, left: 'auto' }}
+        className={`fixed top-0 h-full w-full sm:w-[420px] bg-[var(--surface)] z-[51] shadow-xl transition-transform duration-300 flex flex-col`}
+        style={{
+          [lang === 'ar' ? 'left' : 'right']: 0,
+          [lang === 'ar' ? 'right' : 'left']: 'auto',
+          transform: isCartOpen ? 'translateX(0)' : `translateX(${lang === 'ar' ? '-100%' : '100%'})`,
+        }}
         aria-label={t('cart.bag')}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">

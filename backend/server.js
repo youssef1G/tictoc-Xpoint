@@ -43,6 +43,9 @@ import {
 
 const REQUIRED_ENV_VARS = ['JWT_SECRET', 'ADMIN_USERNAME', 'ADMIN_PASSWORD_HASH', 'FRONTEND_URL']
 
+const VALID_ORDER_STATUSES = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled']
+const VALID_RETURN_STATUSES = ['pending', 'approved', 'rejected', 'cancelled']
+
 for (const key of REQUIRED_ENV_VARS) {
   if (!process.env[key]) {
     throw new Error(`Missing required environment variable: ${key}. Check your .env file.`)
@@ -289,6 +292,9 @@ app.get('/api/admin/orders', requireAdmin, async (req, res) => {
 app.patch('/api/admin/orders/:id', requireAdmin, async (req, res) => {
   try {
     const { status, estimated_delivery } = req.body
+    if (status && !VALID_ORDER_STATUSES.includes(status)) {
+      return res.status(400).json({ error: `Invalid status. Must be one of: ${VALID_ORDER_STATUSES.join(', ')}` })
+    }
     const order = await updateOrder(req.params.id, { status, estimated_delivery })
     res.json(order)
   } catch (err) {
@@ -326,6 +332,10 @@ app.post('/api/admin/admins', requireAdmin, adminWriteLimiter, async (req, res) 
 
 app.delete('/api/admin/admins/:id', requireAdmin, adminWriteLimiter, async (req, res) => {
   try {
+    const all = await listAdmins()
+    if (all.length <= 1) {
+      return res.status(400).json({ error: 'Cannot delete the last admin account' })
+    }
     await deleteAdmin(req.params.id)
     res.json({ ok: true })
   } catch (err) {
@@ -431,7 +441,11 @@ app.get('/api/admin/returns', requireAdmin, async (req, res) => {
 
 app.patch('/api/admin/returns/:id', requireAdmin, async (req, res) => {
   try {
-    res.json(await updateReturnStatus(req.params.id, req.body.status))
+    const { status } = req.body
+    if (status && !VALID_RETURN_STATUSES.includes(status)) {
+      return res.status(400).json({ error: `Invalid return status. Must be one of: ${VALID_RETURN_STATUSES.join(', ')}` })
+    }
+    res.json(await updateReturnStatus(req.params.id, status))
   } catch (err) {
     sendError(res, err)
   }

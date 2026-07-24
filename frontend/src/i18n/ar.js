@@ -247,6 +247,7 @@ export default {
   'tracking.cod': 'الدفع عند الاستلام',
   'tracking.address': 'عنوان التوصيل',
   'tracking.total': 'الإجمالي',
+  'tracking.shipping': 'الشحن',
   'tracking.refresh': '↻ تحديث',
   'tracking.backOrders': '← طلباتي',
 
@@ -272,6 +273,7 @@ export default {
   'admin.storefront': 'المتجر',
   'admin.logout': 'تسجيل الخروج',
   'admin.accessTitle': 'لوحة تحكم تيك توك إكس بوينت',
+  'admin.accessSubtitle': 'سجل الدخول للوحة التحكم',
 
   // AdminDashboard
   'admin.dashboard.title': 'لوحة التحكم',
