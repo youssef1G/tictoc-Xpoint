@@ -71,6 +71,8 @@ export default function Seo({ title, description, ogImage, noindex, product }) {
       <link rel="alternate" href={`${SITE_URL}/?lang=en`} hrefLang="en" />
       <link rel="alternate" href={`${SITE_URL}/?lang=ar`} hrefLang="ar" />
 
+      <meta name="google-site-verification" content="TW43SkMlx4Fw-_u0Afo-F9OopqSB1X4_JBvtwEnal5U" />
+
       {noindex && <meta name="robots" content="noindex, nofollow" />}
 
       {jsonLd(...schemas)}
