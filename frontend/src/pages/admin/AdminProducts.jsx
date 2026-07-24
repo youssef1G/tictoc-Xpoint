@@ -15,7 +15,7 @@ function SortIcon({ dir }) {
 }
 
 export default function AdminProducts() {
-  const { t } = useLocale()
+  const { t, lang } = useLocale()
   const { token, logout } = useAuth()
   const navigate = useNavigate()
   const [products, setProducts] = useState([])
@@ -134,12 +134,13 @@ export default function AdminProducts() {
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative w-full sm:flex-1 sm:min-w-[200px] sm:max-w-xs">
-          <svg xmlns="http://www.w3.org/2000/svg" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" className="absolute top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" style={{ [lang === 'ar' ? 'right' : 'left']: '0.75rem' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
           </svg>
           <input type="text" value={search} onChange={e => setSearch(e.target.value)}
             placeholder={t('admin.products.searchPlaceholder')}
-            className="w-full text-sm bg-[var(--surface)] border border-[var(--border)] rounded-xl pl-9 pr-4 py-2.5 text-[var(--text)] placeholder:text-[var(--muted)]/50 focus:outline-none focus:border-[var(--brand)]" />
+            className="w-full text-sm bg-[var(--surface)] border border-[var(--border)] rounded-xl py-2.5 text-[var(--text)] placeholder:text-[var(--muted)]/50 focus:outline-none focus:border-[var(--brand)]"
+            style={{ paddingLeft: lang === 'ar' ? '1rem' : '2.25rem', paddingRight: lang === 'ar' ? '2.25rem' : '1rem' }} />
         </div>
         <div className="w-full sm:w-[180px]">
           <CustomSelect value={categoryFilter} onChange={setCategoryFilter}
