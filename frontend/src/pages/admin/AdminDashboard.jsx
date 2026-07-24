@@ -30,10 +30,10 @@ function RecentOrderRow({ order, t }) {
   const statusKey = `order.status${order.status.charAt(0).toUpperCase() + order.status.slice(1)}`
   return (
     <tr className="border-t border-[var(--border)] hover:bg-[var(--muted)]/5 transition-colors">
-      <td className="px-4 py-3 font-mono text-xs text-[var(--muted)]">{order.id}</td>
-      <td className="px-4 py-3 text-sm text-[var(--text)]">{order.customer?.name || order.phone || '—'}</td>
-      <td className="px-4 py-3 text-xs text-[var(--muted)]">{t('currency.egp', { amount: Number(order.total || 0).toFixed(0) })}</td>
-      <td className="px-4 py-3">
+      <td className="px-4 py-3 font-mono text-xs text-[var(--muted)] truncate max-w-[120px]">{order.id}</td>
+      <td className="px-4 py-3 text-sm text-[var(--text)]">{order.customer?.name || '—'}</td>
+      <td className="px-4 py-3 text-xs text-[var(--muted)] hidden sm:table-cell">{t('currency.egp', { amount: Number(order.total || 0).toFixed(0) })}</td>
+      <td className="px-4 py-3 hidden sm:table-cell">
         <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold border ${statusBadge[order.status] || ''}`}>
           {t(statusKey)}
         </span>
@@ -110,8 +110,8 @@ export default function AdminDashboard() {
                   <tr className="text-left">
                     <th className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.dashboard.id')}</th>
                     <th className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.dashboard.customer')}</th>
-                    <th className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.dashboard.total')}</th>
-                    <th className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.dashboard.status')}</th>
+                    <th className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.dashboard.total')}</th>
+                    <th className="px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.dashboard.status')}</th>
                   </tr>
                 </thead>
                 <tbody>

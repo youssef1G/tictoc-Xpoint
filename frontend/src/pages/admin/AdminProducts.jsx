@@ -133,7 +133,7 @@ export default function AdminProducts() {
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[200px] max-w-xs">
+        <div className="relative w-full sm:flex-1 sm:min-w-[200px] sm:max-w-xs">
           <svg xmlns="http://www.w3.org/2000/svg" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
           </svg>
@@ -141,12 +141,12 @@ export default function AdminProducts() {
             placeholder={t('admin.products.searchPlaceholder')}
             className="w-full text-sm bg-[var(--surface)] border border-[var(--border)] rounded-xl pl-9 pr-4 py-2.5 text-[var(--text)] placeholder:text-[var(--muted)]/50 focus:outline-none focus:border-[var(--brand)]" />
         </div>
-        <div className="w-[180px]">
+        <div className="w-full sm:w-[180px]">
           <CustomSelect value={categoryFilter} onChange={setCategoryFilter}
             options={[{ value: 'all', label: t('admin.products.allCategories') }, ...categories.map(c => ({ value: c, label: t('cat.' + c) || c }))]}
             placeholder={t('admin.products.allCategories')} />
         </div>
-        <div className="w-[140px]">
+        <div className="w-full sm:w-[140px]">
           <CustomSelect value={storeFilter} onChange={setStoreFilter}
             options={[
               { value: 'all', label: t('admin.products.allStores') },
@@ -155,8 +155,8 @@ export default function AdminProducts() {
             ]}
             placeholder={t('admin.products.allStores')} />
         </div>
-        <div className="flex-1" />
-        <p className="text-xs text-[var(--muted)] self-center">{t('admin.products.count', { count: filtered.length, total: products.length, s: products.length !== 1 ? 's' : '' })}</p>
+        <div className="hidden sm:block flex-1" />
+        <p className="text-xs text-[var(--muted)] sm:self-center">{t('admin.products.count', { count: filtered.length, total: products.length, s: products.length !== 1 ? 's' : '' })}</p>
         <Link to="/admin/products/new" className="btn-primary text-xs">{t('admin.products.addProduct')}</Link>
       </div>
 
@@ -183,10 +183,16 @@ export default function AdminProducts() {
             <thead className="bg-[var(--muted)]/5 text-left">
               <tr>
                 <SortTh label={t('admin.products.product')} sortKey="name" />
-                <SortTh label={t('admin.products.store')} sortKey="store" />
-                <SortTh label={t('admin.products.category')} sortKey="category" />
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] cursor-pointer select-none hover:text-[var(--text)] transition-colors hidden md:table-cell" onClick={() => toggleSort('store')}>
+                  {t('admin.products.store')}{sort.key === 'store' ? <SortIcon dir={sort.dir} /> : <SortIcon dir="" />}
+                </th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] cursor-pointer select-none hover:text-[var(--text)] transition-colors hidden md:table-cell" onClick={() => toggleSort('category')}>
+                  {t('admin.products.category')}{sort.key === 'category' ? <SortIcon dir={sort.dir} /> : <SortIcon dir="" />}
+                </th>
                 <SortTh label={t('admin.products.price')} sortKey="price" />
-                <SortTh label={t('admin.products.stock')} sortKey="stock" />
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] cursor-pointer select-none hover:text-[var(--text)] transition-colors hidden sm:table-cell" onClick={() => toggleSort('stock')}>
+                  {t('admin.products.stock')}{sort.key === 'stock' ? <SortIcon dir={sort.dir} /> : <SortIcon dir="" />}
+                </th>
                 <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] text-right">{t('admin.products.actions')}</th>
               </tr>
             </thead>
@@ -203,14 +209,14 @@ export default function AdminProducts() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 hidden md:table-cell">
                     <span className={`text-[11px] font-semibold ${p.store === 'tictoc' ? 'text-[var(--accent)]' : 'text-[var(--brand)]'}`}>
                       {p.store === 'tictoc' ? t('admin.products.tictoc') : t('admin.products.xpoint')}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-[var(--muted)]">{t('cat.' + p.category) || p.category}</td>
+                  <td className="px-4 py-3 text-xs text-[var(--muted)] hidden md:table-cell">{t('cat.' + p.category) || p.category}</td>
                   <td className="px-4 py-3 text-xs font-semibold text-[var(--text)]">{t('currency.egp', { amount: Number(p.price).toFixed(0) })}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 hidden sm:table-cell">
                     {editingStockId === p.id ? (
                       <div className="flex items-center gap-2">
                         <div className="flex items-center rounded-xl border border-[var(--border)] overflow-hidden">

@@ -50,16 +50,16 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="fixed inset-y-0 z-40 w-60 bg-[var(--surface)] flex flex-col transition-transform duration-200"
+      <div
+        className="fixed inset-y-0 w-60 bg-[var(--surface)] flex flex-col transition-transform duration-200 z-40"
         style={{
           [lang === 'ar' ? 'right' : 'left']: 0,
           [lang === 'ar' ? 'left' : 'right']: 'auto',
           borderRight: lang === 'ar' ? undefined : '1px solid var(--border)',
           borderLeft: lang === 'ar' ? '1px solid var(--border)' : undefined,
-          transform: sidebarOpen || isDesktop
-            ? 'translateX(0)'
-            : `translateX(${lang === 'ar' ? '100%' : '-100%'})`,
-        }}>
+          transform: (sidebarOpen || isDesktop) ? 'translateX(0)' : `translateX(${lang === 'ar' ? '100%' : '-100%'})`,
+        }}
+      >
         <div className="flex items-center gap-3 px-5 h-16 border-b border-[var(--border)] shrink-0">
           <img src="/logo.jpg" alt={t('brand.tictoc') + ' ' + t('brand.xpoint')} className="h-8 w-8 rounded-lg object-cover" />
           <div>
@@ -108,10 +108,12 @@ export default function AdminLayout() {
         <div className="fixed inset-0 z-30 bg-black/30 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      <div className="flex-1 min-w-0" style={{ [lang === 'ar' ? 'paddingRight' : 'paddingLeft']: '15rem' }}>
+      <div className="flex-1 min-w-0" style={{
+          [lang === 'ar' ? 'paddingRight' : 'paddingLeft']: isDesktop ? '15rem' : '0',
+        }}>
         <header className="sticky top-0 z-20 bg-[var(--bg)]/80 backdrop-blur-md border-b border-[var(--border)]">
           <div className="flex items-center justify-between h-16 px-5">
-            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-[var(--muted)]/5 text-[var(--muted)]" style={{ [lang === 'ar' ? 'marginRight' : 'marginLeft']: '-0.5rem' }}>
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-[var(--muted)]/5 text-[var(--muted)]">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 6h16M4 12h16M4 18h16" />
               </svg>

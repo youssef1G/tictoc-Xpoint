@@ -61,12 +61,12 @@ export default function AdminAnalytics() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h2 className="font-heading text-xl font-bold text-[var(--text)]">{t('admin.analytics.title')}</h2>
           <p className="text-xs text-[var(--muted)] mt-1">{t('admin.analytics.subtitle')}</p>
         </div>
-        <div className="w-[180px]">
+        <div className="w-full sm:w-[180px]">
           <CustomSelect value={days} onChange={v => setDays(v)} options={dayOptions} placeholder={t('admin.analytics.last30')} />
         </div>
       </div>

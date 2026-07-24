@@ -96,7 +96,7 @@ export default function AdminManage() {
           <div className="space-y-3">
             {admins.map(admin => (
               <div key={admin.id} className="surface-card p-4">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-[var(--brand-dim)] flex items-center justify-center text-[var(--brand)] font-bold text-sm">
                       {admin.username[0].toUpperCase()}
@@ -108,7 +108,7 @@ export default function AdminManage() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button onClick={() => {
                       setChangingPasswordId(changingPasswordId === admin.id ? null : admin.id)
                       setPwError(''); setNewPw(''); setPwSuccess(false)

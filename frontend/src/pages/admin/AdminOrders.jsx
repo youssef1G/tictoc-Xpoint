@@ -149,13 +149,13 @@ export default function AdminOrders() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-4 pt-4 border-t border-[var(--border)] items-end">
-                <div className="flex-1 min-w-[160px]">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-[var(--border)] sm:items-end">
+                <div className="w-full sm:flex-1 sm:min-w-[160px]">
                   <label className="block text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)] mb-1.5">{t('admin.orders.status')}</label>
                   <CustomSelect value={order.status} onChange={val => handleUpdate(order.id, { status: val })} options={statusOptions} />
                 </div>
 
-                <div className="flex-1 min-w-[180px]">
+                <div className="w-full sm:flex-1 sm:min-w-[180px]">
                   <label className="block text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)] mb-1.5">{t('admin.orders.estDelivery')}</label>
                   <input type="date" defaultValue={order.estimated_delivery || ''}
                     min={new Date().toISOString().split('T')[0]}

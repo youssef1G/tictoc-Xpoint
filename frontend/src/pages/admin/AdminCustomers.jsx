@@ -52,10 +52,10 @@ export default function AdminCustomers() {
               <tr>
                 <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.name')}</th>
                 <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.phone')}</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.orders')}</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.totalSpent')}</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.lastOrder')}</th>
-                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.customers.joined')}</th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.customers.orders')}</th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.customers.totalSpent')}</th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.customers.lastOrder')}</th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden md:table-cell">{t('admin.customers.joined')}</th>
               </tr>
             </thead>
             <tbody>
@@ -69,10 +69,10 @@ export default function AdminCustomers() {
                 <tr key={c.phone} className="border-t border-[var(--border)] hover:bg-[var(--muted)]/5 transition-colors">
                   <td className="px-4 py-3 text-sm font-medium text-[var(--text)]">{c.name || '—'}</td>
                   <td className="px-4 py-3 text-xs text-[var(--muted)]">{c.phone}</td>
-                  <td className="px-4 py-3 text-xs font-semibold text-[var(--text)]">{c.order_count || 0}</td>
-                  <td className="px-4 py-3 text-xs font-semibold text-[var(--text)]">EGP {Number(c.total_spent || 0).toFixed(0)}</td>
-                  <td className="px-4 py-3 text-xs text-[var(--muted)]">{formatDate(c.last_order_date)}</td>
-                  <td className="px-4 py-3 text-xs text-[var(--muted)]">{formatDate(c.created_at)}</td>
+                  <td className="px-4 py-3 text-xs font-semibold text-[var(--text)] hidden sm:table-cell">{c.order_count || 0}</td>
+                  <td className="px-4 py-3 text-xs font-semibold text-[var(--text)] hidden sm:table-cell">EGP {Number(c.total_spent || 0).toFixed(0)}</td>
+                  <td className="px-4 py-3 text-xs text-[var(--muted)] hidden sm:table-cell">{formatDate(c.last_order_date)}</td>
+                  <td className="px-4 py-3 text-xs text-[var(--muted)] hidden md:table-cell">{formatDate(c.created_at)}</td>
                 </tr>
               ))}
             </tbody>

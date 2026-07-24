@@ -109,6 +109,13 @@ export default function Home() {
   const categories = [...new Set(products.map(p => p.category))].slice(0, 5)
   const featured = [...products.filter(p => p.tag === 'Bestseller'), ...products.filter(p => p.tag === 'New')].slice(0, 4)
 
+  const categoryStore = {}
+  products.forEach(p => {
+    const store = p.store || 'xpoint'
+    if (!categoryStore[p.category]) categoryStore[p.category] = new Set()
+    categoryStore[p.category].add(store)
+  })
+
   return (
     <div>
       <section className="relative overflow-hidden border-b border-[var(--border)]">
@@ -154,8 +161,10 @@ export default function Home() {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                 {categories.map(cat => {
                   const CategoryIcon = CATEGORY_ICONS[cat] || Package
+                  const stores = categoryStore[cat]
+                  const singleStore = stores && stores.size === 1 ? [...stores][0] : null
                   return (
-                    <Link key={cat} to={`/shop?category=${cat}`}
+                    <Link key={cat} to={singleStore ? `/shop/${singleStore}?category=${encodeURIComponent(cat)}` : `/shop`}
                       className="group surface-card p-5 sm:p-6 flex flex-col items-center text-center gap-3 transition-all duration-300 hover:-translate-y-1 hover:border-[var(--brand)]/40 hover:shadow-md">
                       <div className="w-14 h-14 rounded-2xl bg-[var(--brand-dim)] flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-[var(--brand)]/15">
                         <CategoryIcon size={24} strokeWidth={1.75} className="text-[var(--brand)]" />
