@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://tictoc-xpoint.vercel.app/sitemap.xml

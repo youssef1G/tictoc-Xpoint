@@ -1,13 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useLocale } from '../context/LocaleContext.jsx'
-import Seo from '../components/Seo.jsx'
 
 export default function About() {
   const { t } = useLocale()
   return (
-    <>
-      <Seo title={t('seo.title.about')} description={t('seo.desc.about')} />
-      <div className="max-w-3xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+    <div className="max-w-3xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
       <div className="text-center mb-12">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--brand-dim)] border border-[var(--brand)]/10 mb-5">
           <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand)]">{t('about.badge')}</span>
@@ -27,6 +24,5 @@ export default function About() {
         </Link>
       </div>
     </div>
-    </>
   )
 }

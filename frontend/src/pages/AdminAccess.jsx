@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
-import Seo from '../components/Seo.jsx'
 
 export default function AdminAccess() {
   const { login, isAuthenticated } = useAuth()
@@ -24,9 +23,7 @@ export default function AdminAccess() {
   }
 
   return (
-    <>
-      <Seo title={t('admin.accessTitle')} noindex />
-      <div className="min-h-screen flex items-center justify-center px-5 bg-[var(--bg)]">
+    <div className="min-h-screen flex items-center justify-center px-5 bg-[var(--bg)]">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <img src="/logo.jpg" alt={t('brand.tictoc') + ' ' + t('brand.xpoint')} className="w-14 h-14 rounded-xl object-cover mx-auto mb-4" />
@@ -52,6 +49,5 @@ export default function AdminAccess() {
         </form>
       </div>
     </div>
-    </>
   )
 }

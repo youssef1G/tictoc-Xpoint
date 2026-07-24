@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
-import Seo from '../components/Seo.jsx'
 
 export default function Cart() {
   const { t } = useLocale()
@@ -10,9 +9,7 @@ export default function Cart() {
 
   if (items.length === 0) {
     return (
-      <>
-        <Seo title={t('seo.title.cart')} description={t('seo.desc.cart')} />
-        <div className="max-w-xl mx-auto px-5 py-24 text-center">
+      <div className="max-w-xl mx-auto px-5 py-24 text-center">
         <div className="w-16 h-16 rounded-full bg-[var(--brand-dim)] flex items-center justify-center mx-auto mb-5">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[var(--brand)]">
             <circle cx="9" cy="21" r="1" /><circle cx="19" cy="21" r="1" />
@@ -25,14 +22,11 @@ export default function Cart() {
           {t('cart.shopNow')}
         </Link>
       </div>
-    </>
     )
   }
 
   return (
-    <>
-      <Seo title={t('seo.title.cart')} description={t('seo.desc.cart')} />
-      <div className="max-w-3xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
+    <div className="max-w-3xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
       <h1 className="text-display text-[var(--text)] mb-8">{t('cart.title')}</h1>
 
       <ul className="space-y-6">
@@ -93,6 +87,5 @@ export default function Cart() {
         {t('cart.continueShopping')}
       </Link>
     </div>
-    </>
   )
 }

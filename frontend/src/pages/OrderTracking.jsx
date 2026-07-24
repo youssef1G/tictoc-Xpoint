@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { fetchOrder } from '../api.js'
 import { useLocale } from '../context/LocaleContext.jsx'
-import Seo from '../components/Seo.jsx'
 
 const STEPS = [
   { key: 'pending',   labelKey: 'order.placed',   icon: '🛍️' },
@@ -53,9 +52,7 @@ export default function OrderTracking() {
   const computedShipping = Math.max(0, Math.round((order.total - computedSubtotal) * 100) / 100)
 
   return (
-    <>
-      <Seo title={t('seo.title.orderTracking')} description={t('seo.desc.orderTracking')} />
-      <div className="max-w-2xl mx-auto px-5 sm:px-8 py-10 sm:py-14 space-y-8">
+    <div className="max-w-2xl mx-auto px-5 sm:px-8 py-10 sm:py-14 space-y-8">
       <div>
         <p className="text-xs font-mono text-[var(--muted)] mb-1">{order.id}</p>
         <h1 className="text-heading-lg text-[var(--text)]">{t('tracking.title')}</h1>
@@ -151,6 +148,5 @@ export default function OrderTracking() {
         </Link>
       </div>
     </div>
-    </>
   )
 }

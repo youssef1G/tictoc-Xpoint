@@ -6,7 +6,6 @@ import ProductCard from '../components/ProductCard.jsx'
 import ProductGallery from '../components/ProductGallery.jsx'
 import { LoadingState, ErrorState } from '../components/StatusStates.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
-import Seo from '../components/Seo.jsx'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -37,7 +36,6 @@ export default function ProductDetail() {
   if (status === 'loading') return <LoadingState label={t('productDetail.loading')} />
   if (status === 'error' || !product) return <ErrorState message={t('productDetail.loadError')} onRetry={load} />
 
-  const ogImage = product.images?.[0] ? product.images[0].startsWith('http') ? product.images[0] : `/images/${product.images[0]}` : '/logo.jpg'
   const outOfStock = product.stock !== null && product.stock !== undefined && product.stock === 0
   const lowStock = product.stock !== null && product.stock !== undefined && product.stock > 0 && product.stock <= 5
   const maxQty = product.stock != null ? product.stock : Infinity
@@ -50,9 +48,7 @@ export default function ProductDetail() {
   }
 
   return (
-    <>
-      <Seo title={t('seo.title.product', { name: product.name })} description={t('seo.desc.product', { name: product.name })} ogImage={ogImage} />
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+    <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
       <nav className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8">
         <Link to="/shop" className="hover:text-[var(--brand)]">{t('productDetail.shop')}</Link>
         <span>/</span>
@@ -145,6 +141,5 @@ export default function ProductDetail() {
         </section>
       )}
     </div>
-    </>
   )
 }

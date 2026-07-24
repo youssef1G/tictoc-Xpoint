@@ -1,14 +1,11 @@
 import { Link } from 'react-router-dom'
 import { STORES } from '../data/constants.js'
 import { useLocale } from '../context/LocaleContext.jsx'
-import Seo from '../components/Seo.jsx'
 
 export default function Shop() {
   const { t } = useLocale()
   return (
-    <>
-      <Seo title={t('seo.title.shop')} description={t('seo.desc.shop')} />
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+    <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
       <div className="mb-10">
         <h1 className="text-display text-[var(--text)] mb-2">{t('shop.title')}</h1>
         <p className="text-sm text-[var(--muted)]">{t('shop.subtitle')}</p>
@@ -40,6 +37,5 @@ export default function Shop() {
         ))}
       </div>
     </div>
-    </>
   )
 }

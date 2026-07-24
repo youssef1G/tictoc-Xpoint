@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { fetchOrdersByPhone, fetchOrder, submitReturn } from '../api.js'
 import CustomSelect from '../components/CustomSelect.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
-import Seo from '../components/Seo.jsx'
 
 const STATUS_STYLE = {
   pending:   'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800',
@@ -218,14 +217,12 @@ export default function MyOrders() {
   }
 
   return (
-    <>
-      <Seo title={t('seo.title.myOrders')} description={t('seo.desc.myOrders')} />
-      <div className="max-w-2xl mx-auto px-5 sm:px-8 py-14 sm:py-20">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--brand-dim)] border border-[var(--brand)]/10 mb-4">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand)]">{t('orders.badge')}</span>
-          </div>
-          <h1 className="text-display text-[var(--text)] mb-2">{t('orders.title')}</h1>
+    <div className="max-w-2xl mx-auto px-5 sm:px-8 py-14 sm:py-20">
+      <div className="text-center mb-10">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--brand-dim)] border border-[var(--brand)]/10 mb-4">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand)]">{t('orders.badge')}</span>
+        </div>
+        <h1 className="text-display text-[var(--text)] mb-2">{t('orders.title')}</h1>
         <p className="text-sm text-[var(--muted)]">
           {t('orders.desc')}
         </p>
@@ -283,6 +280,5 @@ export default function MyOrders() {
         </div>
       )}
     </div>
-    </>
   )
 }
