@@ -5,6 +5,7 @@ import { useLocale } from '../context/LocaleContext.jsx'
 export default function ProductCard({ product }) {
   const { addToCart, setIsCartOpen } = useCart()
   const { t } = useLocale()
+  const egp = (amount) => t('currency.egp', { amount: Number(amount).toFixed(0) })
   const outOfStock = product.stock !== null && product.stock !== undefined && product.stock === 0
   const thumbnail = product.images?.[0] || product.image
 
@@ -57,7 +58,7 @@ export default function ProductCard({ product }) {
           <p className="text-[11px] text-[var(--muted)] mt-0.5">{product.category}</p>
         </div>
         <span className="text-sm font-semibold text-[var(--text)] whitespace-nowrap">
-          EGP {Number(product.price).toFixed(0)}
+          {egp(product.price)}
         </span>
       </div>
     </div>

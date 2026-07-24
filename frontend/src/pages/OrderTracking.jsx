@@ -19,6 +19,7 @@ function formatDate(str) {
 export default function OrderTracking() {
   const { t } = useLocale()
   const { id } = useParams()
+  const egp = (amount) => t('currency.egp', { amount: Number(amount).toFixed(0) })
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -120,18 +121,18 @@ export default function OrderTracking() {
           {(order.items || []).map((item, i) => (
             <div key={i} className="flex justify-between text-xs">
               <span className="text-[var(--muted)]">{item.name} × {item.quantity}</span>
-              <span className="text-[var(--text)] font-medium">EGP {Number(item.price * item.quantity).toFixed(0)}</span>
+              <span className="text-[var(--text)] font-medium">{egp(item.price * item.quantity)}</span>
             </div>
           ))}
           {computedShipping > 0 && (
             <div className="flex justify-between text-xs text-[var(--muted)]">
               <span>{t('tracking.shipping')}</span>
-              <span>EGP {Number(computedShipping).toFixed(0)}</span>
+              <span>{egp(computedShipping)}</span>
             </div>
           )}
           <div className="flex justify-between text-sm font-bold text-[var(--text)] pt-2 border-t border-[var(--border)]">
             <span>{t('tracking.total')}</span>
-            <span>EGP {Number(order.total).toFixed(0)}</span>
+            <span>{egp(order.total)}</span>
           </div>
         </div>
       </div>

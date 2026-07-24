@@ -116,6 +116,7 @@ function ReturnForm({ orderId, onClose, onSuccess }) {
 
 function OrderCard({ order, returningId, setReturningId }) {
   const { t } = useLocale()
+  const egp = (amount) => t('currency.egp', { amount: Number(amount).toFixed(0) })
   const [submittedReturnId, setSubmittedReturnId] = useState(null)
   const STATUS_LABEL = {
     pending:   t('order.statusPending'),
@@ -143,7 +144,7 @@ function OrderCard({ order, returningId, setReturningId }) {
           <span className={`text-xs font-semibold border rounded-full px-2.5 py-0.5 ${STATUS_STYLE[order.status] || STATUS_STYLE.pending}`}>
             {STATUS_LABEL[order.status] || order.status}
           </span>
-          <span className="font-semibold text-sm text-[var(--text)]">EGP {Number(order.total).toFixed(0)}</span>
+          <span className="font-semibold text-sm text-[var(--text)]">{egp(order.total)}</span>
         </div>
       </div>
 
@@ -151,7 +152,7 @@ function OrderCard({ order, returningId, setReturningId }) {
         {order.items?.slice(0, 3).map((item, i) => (
           <li key={i} className="flex justify-between">
             <span>{item.quantity} × {item.name}</span>
-            <span>EGP {Number(item.price * item.quantity).toFixed(0)}</span>
+            <span>{egp(item.price * item.quantity)}</span>
           </li>
         ))}
         {order.items?.length > 3 && (

@@ -75,7 +75,7 @@ export default function ProductDetail() {
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)] mb-2">{product.category}</p>
           <h1 className="text-display text-[var(--text)]">{product.name}</h1>
           <p className="text-2xl font-bold text-[var(--text)] mt-3">
-            EGP {Number(product.price).toFixed(0)}
+            {t('currency.egp', { amount: Number(product.price).toFixed(0) })}
           </p>
 
           {lowStock && !outOfStock && (

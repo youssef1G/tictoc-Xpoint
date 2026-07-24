@@ -5,6 +5,7 @@ import { useLocale } from '../context/LocaleContext.jsx'
 export default function CartDrawer() {
   const { t, lang } = useLocale()
   const { items, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, subtotal } = useCart()
+  const egp = (amount) => t('currency.egp', { amount: Number(amount).toFixed(0) })
 
   return (
     <>
@@ -64,7 +65,7 @@ export default function CartDrawer() {
                     className="h-20 w-20 rounded-xl object-cover bg-[var(--muted)]/5 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-[var(--text)] truncate">{item.name}</p>
-                    <p className="text-sm font-medium text-[var(--text)] mt-0.5">EGP {Number(item.price).toFixed(0)}</p>
+                    <p className="text-sm font-medium text-[var(--text)] mt-0.5">{egp(item.price)}</p>
                     <div className="mt-2.5 flex items-center gap-2">
                       <div className="flex items-center rounded-full border border-[var(--border)]">
                         <button
@@ -88,7 +89,7 @@ export default function CartDrawer() {
                     </div>
                   </div>
                   <p className="text-sm font-semibold text-[var(--text)] whitespace-nowrap">
-                    EGP {Number(item.price * item.quantity).toFixed(0)}
+                    {egp(item.price * item.quantity)}
                   </p>
                 </li>
               ))}
@@ -101,7 +102,7 @@ export default function CartDrawer() {
             <div className="flex items-center justify-between">
               <span className="text-sm text-[var(--muted)]">{t('cart.subtotal')}</span>
               <span className="font-heading text-lg font-semibold text-[var(--text)]">
-                EGP {Number(subtotal).toFixed(0)}
+                {egp(subtotal)}
               </span>
             </div>
             <p className="text-[11px] text-[var(--muted)]">{t('cart.shippingCalculated')}</p>

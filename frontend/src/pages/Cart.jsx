@@ -5,6 +5,7 @@ import { useLocale } from '../context/LocaleContext.jsx'
 export default function Cart() {
   const { t } = useLocale()
   const { items, updateQuantity, removeFromCart, subtotal } = useCart()
+  const egp = (amount) => t('currency.egp', { amount: Number(amount).toFixed(0) })
 
   if (items.length === 0) {
     return (
@@ -39,7 +40,7 @@ export default function Cart() {
             <div className="flex-1 min-w-0">
               <p className="text-[15px] font-semibold text-[var(--text)]">{item.name}</p>
               <p className="text-sm font-medium text-[var(--text)] mt-0.5">
-                EGP {Number(item.price).toFixed(0)}
+                {egp(item.price)}
               </p>
               <div className="mt-3 flex items-center gap-4">
                 <div className="flex items-center rounded-full border border-[var(--border)]">
@@ -64,7 +65,7 @@ export default function Cart() {
               </div>
             </div>
             <p className="text-[15px] font-semibold text-[var(--text)] whitespace-nowrap">
-              EGP {Number(item.price * item.quantity).toFixed(0)}
+              {egp(item.price * item.quantity)}
             </p>
           </li>
         ))}
@@ -72,7 +73,7 @@ export default function Cart() {
 
       <div className="mt-8 flex items-center justify-between font-heading text-lg font-semibold">
         <span className="text-[var(--text)]">{t('cart.subtotal')}</span>
-        <span className="text-[var(--text)]">EGP {Number(subtotal).toFixed(0)}</span>
+        <span className="text-[var(--text)]">{egp(subtotal)}</span>
       </div>
       <p className="text-[11px] text-[var(--muted)] mt-1">
         {t('cart.shippingCalculated')}

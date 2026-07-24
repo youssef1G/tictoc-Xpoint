@@ -30,6 +30,7 @@ export default function Checkout() {
   const { t } = useLocale()
   const { items, subtotal, clearCart } = useCart()
   const navigate = useNavigate()
+  const egp = (amount) => t('currency.egp', { amount: Number(amount).toFixed(0) })
   const [form, setForm]   = useState({ name: '', phone: '', email: '', address: '', city: '' })
   const [errors, setErrors]   = useState({})
   const [loading, setLoading] = useState(false)
@@ -174,7 +175,7 @@ export default function Checkout() {
                     <p className="text-[11px] text-[var(--muted)]">{t('checkout.qty', { qty: item.quantity })}</p>
                   </div>
                   <span className="text-xs font-semibold text-[var(--text)] whitespace-nowrap">
-                    EGP {Number(item.price * item.quantity).toFixed(0)}
+                    {egp(item.price * item.quantity)}
                   </span>
                 </li>
               ))}
@@ -182,12 +183,12 @@ export default function Checkout() {
             <div className="border-t border-[var(--border)] pt-4 space-y-2">
               <div className="flex justify-between text-xs text-[var(--muted)]">
                 <span>{t('checkout.subtotal')}</span>
-                <span>EGP {Number(subtotal).toFixed(0)}</span>
+                <span>{egp(subtotal)}</span>
               </div>
               <div className="flex justify-between text-xs text-[var(--muted)]">
                 <span>{t('checkout.shipping')}</span>
                 <span>{settingsLoaded
-                  ? (shippingFee > 0 ? `EGP ${shippingFee.toFixed(0)}`
+                  ? (shippingFee > 0 ? egp(shippingFee)
                     : freeThreshold > 0 && subtotal >= freeThreshold ? `${t('checkout.free')} 🎉`
                     : t('checkout.free'))
                   : '...'}</span>
@@ -204,7 +205,7 @@ export default function Checkout() {
               )}
               <div className="flex justify-between font-heading text-[var(--text)] pt-2 border-t border-[var(--border)]">
                 <span>{t('checkout.total')}</span>
-                <span className="font-bold text-lg">EGP {Number(total).toFixed(0)}</span>
+                <span className="font-bold text-lg">{egp(total)}</span>
               </div>
             </div>
           </div>
