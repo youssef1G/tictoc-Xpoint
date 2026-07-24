@@ -51,7 +51,7 @@ export default function ProductDetail() {
 
   return (
     <>
-      <Seo title={t('seo.title.product', { name: product.name })} description={t('seo.desc.product', { name: product.name })} ogImage={ogImage} />
+      <Seo title={t('seo.title.product', { name: product.name })} description={t('seo.desc.product', { name: product.name })} ogImage={ogImage} product={product} />
       <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
       <nav className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8">
         <Link to="/shop" className="hover:text-[var(--brand)]">{t('productDetail.shop')}</Link>
