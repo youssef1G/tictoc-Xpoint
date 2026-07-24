@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { submitComplaint } from '../api.js'
 import { useLocale } from '../context/LocaleContext.jsx'
+import Seo from '../components/Seo.jsx'
 
 function validate(form, t) {
   const e = {}
@@ -89,7 +90,9 @@ export default function Contact() {
   }
 
   return (
-    <div className="max-w-xl mx-auto px-5 sm:px-8 py-14 sm:py-20">
+    <>
+      <Seo title={t('seo.title.contact')} description={t('seo.desc.contact')} />
+      <div className="max-w-xl mx-auto px-5 sm:px-8 py-14 sm:py-20">
       <div className="text-center mb-10">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--brand-dim)] border border-[var(--brand)]/10 mb-4">
           <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand)]">{t('contact.badge')}</span>
@@ -120,5 +123,6 @@ export default function Contact() {
         </button>
       </form>
     </div>
+    </>
   )
 }

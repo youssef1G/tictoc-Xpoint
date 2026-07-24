@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
+import Seo from '../components/Seo.jsx'
 import { createCodOrder } from '../api.js'
 
 const BASE = import.meta.env.VITE_API_URL || 'http://localhost:4242'
@@ -106,7 +107,9 @@ export default function Checkout() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+    <>
+      <Seo title={t('seo.title.checkout')} description={t('seo.desc.checkout')} />
+      <div className="max-w-5xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
       <nav className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8">
         <Link to="/cart" className="hover:text-[var(--brand)]">{t('checkout.cart')}</Link>
         <span>/</span>
@@ -217,5 +220,6 @@ export default function Checkout() {
         </div>
       </div>
     </div>
+    </>
   )
 }

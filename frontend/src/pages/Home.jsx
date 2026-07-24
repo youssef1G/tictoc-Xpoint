@@ -5,6 +5,7 @@ import { fetchProducts } from '../api.js'
 import ProductCard from '../components/ProductCard.jsx'
 import { LoadingState, ErrorState } from '../components/StatusStates.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
+import Seo from '../components/Seo.jsx'
 
 const CATEGORY_ICONS = {
   'Phone Cases':       Smartphone,
@@ -117,8 +118,10 @@ export default function Home() {
   })
 
   return (
-    <div>
-      <section className="relative overflow-hidden border-b border-[var(--border)]">
+    <>
+      <Seo title={t('seo.title.home')} description={t('seo.desc.home')} />
+      <div>
+        <section className="relative overflow-hidden border-b border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-12 pb-16 sm:pt-20 sm:pb-28 grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <div className="animate-fade-up order-2 lg:order-1">
             <h1 className="font-heading text-[2.25rem] sm:text-[3rem] lg:text-[3.5rem] font-bold leading-[1.08] tracking-[-0.025em] text-[var(--text)] mb-5" dangerouslySetInnerHTML={{ __html: t('home.heroTitle') }} />
@@ -212,5 +215,6 @@ export default function Home() {
         </>
       )}
     </div>
+    </>
   )
 }

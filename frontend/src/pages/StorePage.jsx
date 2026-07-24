@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard.jsx'
 import { LoadingState, ErrorState } from '../components/StatusStates.jsx'
 import { getStore } from '../data/constants.js'
 import { useLocale } from '../context/LocaleContext.jsx'
+import Seo from '../components/Seo.jsx'
 
 export default function StorePage() {
   const { t } = useLocale()
@@ -44,7 +45,9 @@ export default function StorePage() {
   if (status === 'error') return <ErrorState message={t('store.loadError')} onRetry={load} />
 
   return (
-    <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+    <>
+      <Seo title={t('seo.title.' + store.slug)} description={t('seo.desc.' + store.slug)} />
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
       <div className="mb-8">
         <h1 className="text-display text-[var(--text)] mb-1">{store.slug === 'xpoint' ? t('brand.xpoint') : t('brand.tictoc')}</h1>
         <p className="text-sm text-[var(--muted)]">{t('store.subtitle.' + store.slug)}</p>
@@ -78,5 +81,6 @@ export default function StorePage() {
         </div>
       )}
     </div>
+    </>
   )
 }
