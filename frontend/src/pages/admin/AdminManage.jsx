@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useLocale } from '../../context/LocaleContext.jsx'
@@ -20,6 +20,7 @@ export default function AdminManage() {
   const [pwError, setPwError] = useState('')
   const [pwSaving, setPwSaving] = useState(false)
   const [pwSuccess, setPwSuccess] = useState(false)
+  const newPasswordRef = useRef()
 
   useEffect(() => {
     fetchAdmins(token)
@@ -71,12 +72,12 @@ export default function AdminManage() {
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.manage.username')}</label>
-              <input type="text" value={newUsername} onChange={e => setNewUsername(e.target.value)}
+              <input type="text" value={newUsername} onChange={e => setNewUsername(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); newPasswordRef.current?.focus() } }}
                 placeholder={t('admin.manage.usernamePlaceholder')} className={inputCls} />
             </div>
             <div>
               <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.manage.password')}</label>
-              <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
+              <input ref={newPasswordRef} type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
                 placeholder={t('admin.manage.passwordPlaceholder')} className={inputCls} />
             </div>
           </div>

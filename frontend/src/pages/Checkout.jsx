@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
@@ -31,6 +31,11 @@ export default function Checkout() {
   const { items, subtotal, clearCart } = useCart()
   const navigate = useNavigate()
   const egp = (amount) => t('currency.egp', { amount: Number(amount).toFixed(0) })
+  const phoneRef = useRef()
+  const emailRef = useRef()
+  const addressRef = useRef()
+  const cityRef = useRef()
+  const next = (e, ref) => { if (e.key === 'Enter') { e.preventDefault(); ref.current?.focus() } }
   const [form, setForm]   = useState({ name: '', phone: '', email: '', address: '', city: '' })
   const [errors, setErrors]   = useState({})
   const [loading, setLoading] = useState(false)
@@ -114,16 +119,16 @@ export default function Checkout() {
             <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4">{t('checkout.contactDetails')}</h2>
             <div className="space-y-4">
               <Field label={t('checkout.fullName')} error={errors.name}>
-                <input type="text" value={form.name} onChange={set('name')}
+                  <input type="text" value={form.name} onChange={set('name')} onKeyDown={e => next(e, phoneRef)}
                   placeholder={t('checkout.namePlaceholder')} className={inputCls('name')} />
               </Field>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label={t('checkout.phoneNumber')} error={errors.phone}>
-                  <input type="tel" value={form.phone} onChange={set('phone')}
+                  <input ref={phoneRef} type="tel" value={form.phone} onChange={set('phone')} onKeyDown={e => next(e, emailRef)}
                     placeholder={t('checkout.phonePlaceholder')} className={inputCls('phone')} />
                 </Field>
                 <Field label={<>{t('checkout.email')} <span className="text-[var(--muted)] font-normal">{t('checkout.optional')}</span></>} error={errors.email}>
-                  <input type="email" value={form.email} onChange={set('email')}
+                  <input ref={emailRef} type="email" value={form.email} onChange={set('email')} onKeyDown={e => next(e, addressRef)}
                     placeholder={t('checkout.emailPlaceholder')} className={inputCls('email')} />
                 </Field>
               </div>
@@ -134,12 +139,12 @@ export default function Checkout() {
             <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4">{t('checkout.deliveryAddress')}</h2>
             <div className="space-y-4">
               <Field label={t('checkout.streetAddress')} error={errors.address}>
-                <input type="text" value={form.address} onChange={set('address')}
-                  placeholder={t('checkout.streetPlaceholder')} className={inputCls('address')} />
+                  <input ref={addressRef} type="text" value={form.address} onChange={set('address')} onKeyDown={e => next(e, cityRef)}
+                    placeholder={t('checkout.streetPlaceholder')} className={inputCls('address')} />
               </Field>
               <Field label={t('checkout.city')} error={errors.city}>
-                <input type="text" value={form.city} onChange={set('city')}
-                  placeholder={t('checkout.cityPlaceholder')} className={inputCls('city')} />
+                  <input ref={cityRef} type="text" value={form.city} onChange={set('city')}
+                    placeholder={t('checkout.cityPlaceholder')} className={inputCls('city')} />
               </Field>
             </div>
           </div>
