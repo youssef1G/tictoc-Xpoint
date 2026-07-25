@@ -155,7 +155,7 @@ export default function AdminProducts() {
         </div>
         <div className="w-full sm:w-[180px]">
           <CustomSelect value={categoryFilter} onChange={setCategoryFilter}
-            options={[{ value: 'all', label: t('admin.products.allCategories') }, ...categories.map(c => ({ value: c, label: t('cat.' + c) || c }))]}
+            options={[{ value: 'all', label: t('admin.products.allCategories') }, ...categories.map(c => { const k = 'cat.' + c; const v = t(k); return { value: c, label: v !== k ? v : c } })]}
             placeholder={t('admin.products.allCategories')} />
         </div>
         <div className="w-full sm:w-[140px]">
@@ -260,7 +260,7 @@ export default function AdminProducts() {
                       {p.store === 'tictoc' ? t('admin.products.tictoc') : t('admin.products.xpoint')}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-[var(--muted)] hidden md:table-cell">{t('cat.' + p.category) || p.category}</td>
+                  <td className="px-4 py-3 text-xs text-[var(--muted)] hidden md:table-cell">{(() => { const k = 'cat.' + p.category; const v = t(k); return v !== k ? v : p.category })()}</td>
                   <td className="px-4 py-3 text-xs font-semibold text-[var(--text)]">{t('currency.egp', { amount: Number(p.price).toFixed(0) })}</td>
                   <td className="px-4 py-3 hidden sm:table-cell">
                     {editingStockId === p.id ? (

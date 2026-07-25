@@ -184,7 +184,7 @@ export default function AdminCategories() {
                         onKeyDown={e => { if (e.key === 'Enter') handleUpdate(cat.name, cat.store); if (e.key === 'Escape') setEditingKey(null) }}
                         className="w-full text-sm bg-[var(--surface)] border border-[var(--border)] rounded-lg py-1.5 px-2 text-[var(--text)] focus:outline-none focus:border-[var(--brand)]" />
                     ) : (
-                      <span className="text-[13px] font-medium text-[var(--text)]">{t('cat.' + cat.name) || cat.name}</span>
+                      <span className="text-[13px] font-medium text-[var(--text)]">{cat.name}</span>
                     )}
                   </td>
                   <td className="px-4 py-3">
