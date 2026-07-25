@@ -351,6 +351,9 @@ export default {
   'admin.categories.namePlaceholder': 'اسم القسم',
   'admin.categories.xpoint': 'إكس بوينت',
   'admin.categories.tictoc': 'تيك توك',
+  'admin.categories.errorExists': 'قسم بنفس الاسم موجود بالفعل.',
+  'admin.categories.errorNotFound': 'القسم غير موجود.',
+  'admin.categories.errorInUse': 'لا يمكن حذف قسم لا يزال يحتوي على منتجات. أعد تعيين المنتجات أو احذفها أولاً.',
 
   // ProductForm
   'admin.form.edit': 'تعديل المنتج',

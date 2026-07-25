@@ -36,6 +36,14 @@ export default function AdminCategories() {
     return false
   }
 
+  function translateError(msg) {
+    if (!msg) return msg
+    if (msg.includes('already exists')) return t('admin.categories.errorExists')
+    if (msg.includes('not found')) return t('admin.categories.errorNotFound')
+    if (msg.includes('still has products')) return t('admin.categories.errorInUse')
+    return msg
+  }
+
   const handleCreate = async (e) => {
     e.preventDefault()
     if (!newName.trim()) return
@@ -46,7 +54,7 @@ export default function AdminCategories() {
       setCategories(prev => [...prev, cat].sort((a, b) => a.name.localeCompare(b.name)))
       setNewName(''); setNewStore('xpoint'); setShowCreate(false)
     } catch (err) {
-      if (!handleAuthError(err)) setError(err.message)
+      if (!handleAuthError(err)) setError(translateError(err.message))
     } finally { setCreating(false) }
   }
 
@@ -58,7 +66,7 @@ export default function AdminCategories() {
       await deleteCategory(token, name, store)
       setCategories(prev => prev.filter(c => c.name !== name || c.store !== store))
     } catch (err) {
-      if (!handleAuthError(err)) setError(err.message)
+      if (!handleAuthError(err)) setError(translateError(err.message))
     } finally { setDeletingName(null) }
   }
 
@@ -76,7 +84,7 @@ export default function AdminCategories() {
       setCategories(prev => prev.map(c => (c.name === originalName && c.store === originalStore) ? updated : c).sort((a, b) => a.name.localeCompare(b.name)))
       setEditingKey(null)
     } catch (err) {
-      if (!handleAuthError(err)) setError(err.message)
+      if (!handleAuthError(err)) setError(translateError(err.message))
     }
   }
 

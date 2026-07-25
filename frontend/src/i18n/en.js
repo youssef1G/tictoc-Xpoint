@@ -351,6 +351,9 @@ export default {
   'admin.categories.namePlaceholder': 'Category name',
   'admin.categories.xpoint': 'Xpoint',
   'admin.categories.tictoc': 'Tic Toc',
+  'admin.categories.errorExists': 'A category with this name already exists.',
+  'admin.categories.errorNotFound': 'Category not found.',
+  'admin.categories.errorInUse': 'Cannot delete category that still has products. Reassign or delete those products first.',
 
   // ProductForm
   'admin.form.edit': 'Edit product',
