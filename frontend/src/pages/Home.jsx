@@ -234,7 +234,7 @@ export default function Home() {
                         <div className="min-w-0 flex-1">
                           <span className="inline-flex items-center gap-1.5 min-w-0 flex-1">
                             <span className="text-[14px] sm:text-[15px] font-semibold text-[var(--text)] leading-tight truncate transition-colors group-hover:text-[var(--brand)]">
-                              {t('cat.' + cat) || cat}
+                              {(() => { const k = 'cat.' + cat; const v = t(k); return v !== k ? v : cat })()}
                             </span>
                             <span className="text-[11px] text-[var(--muted)] font-medium shrink-0">{count}</span>
                           </span>

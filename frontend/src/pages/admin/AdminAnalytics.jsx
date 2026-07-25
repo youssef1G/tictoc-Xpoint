@@ -224,7 +224,7 @@ export default function AdminAnalytics() {
               {data.ordersByCategory.map((c) => (
                 <AnimatedBar
                   key={c.category}
-                  label={t('cat.' + c.category) || c.category}
+                  label={(() => { const k = 'cat.' + c.category; const v = t(k); return v !== k ? v : c.category })()}
                   value={c.count}
                   max={maxCategory}
                   color="var(--accent)"

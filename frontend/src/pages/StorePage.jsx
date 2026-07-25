@@ -61,7 +61,7 @@ export default function StorePage() {
                 : 'border border-[var(--border)] text-[var(--muted)] hover:border-[var(--brand)] hover:text-[var(--brand)] bg-[var(--surface)]'
             }`}
           >
-            {cat === 'All' ? t('store.all') : t('cat.' + cat) || cat}
+            {cat === 'All' ? t('store.all') : (() => { const k = 'cat.' + cat; const v = t(k); return v !== k ? v : cat })()}
           </button>
         ))}
       </div>

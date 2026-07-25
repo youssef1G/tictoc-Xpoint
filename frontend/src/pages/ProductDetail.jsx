@@ -58,7 +58,7 @@ export default function ProductDetail() {
       >
         <Link to="/shop" className="hover:text-[var(--brand)]">{t('productDetail.shop')}</Link>
         <span>/</span>
-        <Link to={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:text-[var(--brand)]">{t('cat.' + product.category) || product.category}</Link>
+        <Link to={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:text-[var(--brand)]">{(() => { const k = 'cat.' + product.category; const v = t(k); return v !== k ? v : product.category })()}</Link>
         <span>/</span>
         <span className="text-[var(--text)]">{product.name}</span>
       </motion.nav>
