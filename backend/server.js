@@ -194,6 +194,7 @@ app.delete('/api/admin/categories/:name', requireAdmin, async (req, res) => {
     res.json({ ok: true })
   } catch (err) {
     if (err.message === 'Category not found') return res.status(404).json({ error: err.message })
+    if (err.code === '23503') return res.status(409).json({ error: 'Cannot delete category that still has products. Reassign or delete those products first.' })
     sendError(res, err)
   }
 })
