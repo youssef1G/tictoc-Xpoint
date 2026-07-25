@@ -46,8 +46,13 @@ export default function Footer() {
             <h4 className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text)] mb-3">{t('footer.connect')}</h4>
             <ul className="space-y-2">
               <li>
-                <a href="‏https://whatsapp.com/channel/0029VbBuyltHrDZWTjbJHy22" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
+                <a href="https://whatsapp.com/channel/0029VbBuyltHrDZWTjbJHy22" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
                   WhatsApp
+                </a>
+              </li>
+              <li>
+                <a href="https://t.me/XpointTicTok" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
+                  Telegram
                 </a>
               </li>
               <li>
