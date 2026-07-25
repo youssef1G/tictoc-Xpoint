@@ -109,13 +109,30 @@ export async function getProductById(id) {
   return data
 }
 
+async function ensureCategoryExists(category) {
+  if (!category) return
+  const { data: existing } = await getSupabase()
+    .from('categories')
+    .select('name')
+    .eq('name', category)
+    .maybeSingle()
+  if (!existing) {
+    const { error } = await getSupabase()
+      .from('categories')
+      .insert({ name: category, store: 'xpoint' })
+    if (error && error.code !== '23505') throw error
+  }
+}
+
 export async function createProduct(product) {
   const safeProduct = stripProtectedFields(product, PRODUCT_PROTECTED_FIELDS)
+  await ensureCategoryExists(safeProduct.category)
   return insertWithRetry('products', () => ({ ...safeProduct, id: nextProductId() }))
 }
 
 export async function updateProduct(id, updates) {
   const safeUpdates = stripProtectedFields(updates, PRODUCT_PROTECTED_FIELDS)
+  await ensureCategoryExists(safeUpdates.category)
   const { data, error } = await getSupabase()
     .from('products')
     .update(safeUpdates)
