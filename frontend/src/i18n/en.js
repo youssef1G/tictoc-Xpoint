@@ -24,7 +24,7 @@ export default {
   'footer.contact': 'Contact',
   'footer.trackOrder': 'Track order',
   'footer.returns': 'Returns',
-  'footer.connect': 'Connect',
+  'footer.connect': 'Follow us',
   'footer.copyright': '© {year} Tic Toc Xpoint. All rights reserved.',
   'footer.developedBy': 'Developed By',
 

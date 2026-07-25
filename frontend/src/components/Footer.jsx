@@ -44,7 +44,7 @@ export default function Footer() {
             <h4 className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text)] mb-3">{t('footer.connect')}</h4>
             <ul className="space-y-2">
               <li>
-                <a href="https://wa.me/201554219464" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
+                <a href="‏https://chat.whatsapp.com/Cb8yZlrlpCSKW0yjodaDK6?s=sw&p=a&mlu=4" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
                   WhatsApp
                 </a>
               </li>
@@ -54,7 +54,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://www.facebook.com/tictocxpoint" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
+                <a href="https://www.facebook.com/share/1DfqUYxnWp/" target="_blank" rel="noopener noreferrer" className="text-[13px] text-[var(--muted)] hover:text-[var(--brand)] transition-colors">
                   Facebook
                 </a>
               </li>
