@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import { motion } from 'motion/react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useLocale } from '../../context/LocaleContext.jsx'
@@ -65,8 +66,19 @@ export default function AdminManage() {
   const inputCls = 'w-full rounded-xl border border-[var(--border)] px-4 py-3 text-sm bg-[var(--surface)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]'
 
   return (
-    <div className="space-y-8 max-w-2xl">
-      <div>
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4 }}
+      className="space-y-8 max-w-2xl"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.35 }}
+      >
         <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4">{t('admin.manage.addAdmin')}</h2>
         <form onSubmit={handleCreate} className="surface-card p-5 space-y-4">
           <div className="grid sm:grid-cols-2 gap-4">
@@ -87,16 +99,34 @@ export default function AdminManage() {
             {creating ? t('admin.manage.creating') : t('admin.manage.add')}
           </button>
         </form>
-      </div>
+      </motion.div>
 
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.35, delay: 0.1 }}
+      >
         <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4">{t('admin.manage.existing')}</h2>
         {loading ? <p className="text-xs text-[var(--muted)]">{t('status.loading')}</p> : admins.length === 0 ? (
           <p className="text-sm text-[var(--muted)]">{t('admin.manage.noAdmins')}</p>
         ) : (
-          <div className="space-y-3">
-            {admins.map(admin => (
-              <div key={admin.id} className="surface-card p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.3, delay: 0.15 }}
+            className="space-y-3"
+          >
+            {admins.map((admin, idx) => (
+              <motion.div
+                key={admin.id}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: idx * 0.06 }}
+                className="surface-card p-4"
+              >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-[var(--brand-dim)] flex items-center justify-center text-[var(--brand)] font-bold text-sm">
@@ -142,11 +172,11 @@ export default function AdminManage() {
                     </button>
                   </div>
                 )}
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

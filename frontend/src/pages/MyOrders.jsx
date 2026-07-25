@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { fetchOrdersByPhone, fetchOrder, submitReturn } from '../api.js'
 import CustomSelect from '../components/CustomSelect.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
+import { fadeUp, staggerContainer, staggerItem } from '../lib/animations.js'
 
 const STATUS_STYLE = {
   pending:   'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800',
@@ -218,7 +220,7 @@ export default function MyOrders() {
 
   return (
     <div className="max-w-2xl mx-auto px-5 sm:px-8 py-14 sm:py-20">
-      <div className="text-center mb-10">
+      <motion.div className="text-center mb-10" {...fadeUp}>
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--brand-dim)] border border-[var(--brand)]/10 mb-4">
           <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand)]">{t('orders.badge')}</span>
         </div>
@@ -226,9 +228,14 @@ export default function MyOrders() {
         <p className="text-sm text-[var(--muted)]">
           {t('orders.desc')}
         </p>
-      </div>
+      </motion.div>
 
-      <div className="surface-card p-5 sm:p-6 mb-8">
+      <motion.div className="surface-card p-5 sm:p-6 mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1], delay: 0.1 }}
+      >
         <form onSubmit={handleLookup} className="space-y-3">
           <div className="flex gap-3">
             <input type="text" value={query} onChange={e => setQuery(e.target.value)}
@@ -244,7 +251,7 @@ export default function MyOrders() {
             {isOrderId(query) ? t('orders.searchById') : t('orders.searchDesc')}
           </p>
         </form>
-      </div>
+      </motion.div>
 
       {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-6">{error}</p>}
 
@@ -255,29 +262,41 @@ export default function MyOrders() {
             <Link to="/shop" className="btn-primary text-sm">{t('orders.browseShop')}</Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <motion.div className="space-y-4"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.05 }}
+          >
             <p className="text-xs text-[var(--muted)]">{t('orders.found', { count: orders.length, s: orders.length !== 1 ? 's' : '' })}</p>
             {orders.map(order => (
-              <OrderCard key={order.id} order={order} returningId={returningId} setReturningId={setReturningId} />
+              <motion.div key={order.id} variants={staggerItem}>
+                <OrderCard order={order} returningId={returningId} setReturningId={setReturningId} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )
       )}
 
       {status === 'idle' && (
-        <div className="grid sm:grid-cols-3 gap-4 mt-4">
+        <motion.div className="grid sm:grid-cols-3 gap-4 mt-4"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {[
             { icon: '📦', title: t('orders.trackTitle'), desc: t('orders.trackDesc') },
             { icon: '🕐', title: t('orders.historyTitle'), desc: t('orders.historyDesc') },
             { icon: '↩️', title: t('orders.returnTitle'), desc: t('orders.returnDesc') },
           ].map(tip => (
-            <div key={tip.title} className="surface-card p-5 text-center">
+            <motion.div key={tip.title} variants={staggerItem} className="surface-card p-5 text-center">
               <span className="text-2xl block mb-3">{tip.icon}</span>
               <p className="text-xs font-semibold text-[var(--text)] mb-1">{tip.title}</p>
               <p className="text-[11px] text-[var(--muted)]">{tip.desc}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   )

@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { Zap, Headphones, Smartphone, Watch, Plug, Cable, BatteryCharging, ShieldCheck, Music2, Car, Gamepad2, Package, ArrowRight, ChevronRight, Truck, MessageCircle, RotateCcw } from 'lucide-react'
 import { fetchProducts } from '../api.js'
 import ProductCard from '../components/ProductCard.jsx'
 import { LoadingState, ErrorState } from '../components/StatusStates.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
+import {
+  fadeUp, fadeIn, fadeLeft, fadeRight, scaleIn,
+  staggerContainer, staggerItem, staggerItemFadeRight,
+} from '../lib/animations.js'
 
 const CATEGORY_ICONS = {
   'Phone Cases':       Smartphone,
@@ -52,7 +57,6 @@ function HeroIllustration() {
         @media (min-width: 1024px) { .orbit-radius { --r: 178px; } }
       `}</style>
 
-      {/* Background rings + ambient dots */}
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.04] dark:opacity-[0.08]">
         <svg viewBox="0 0 200 200" className="w-full h-full">
           <circle cx="100" cy="100" r="95" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-[var(--brand)] ring-slow" />
@@ -67,14 +71,12 @@ function HeroIllustration() {
         </svg>
       </div>
 
-      {/* Logo */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="w-36 h-36 sm:w-44 sm:h-44 lg:w-56 lg:h-56 rounded-full border border-[var(--border)] flex items-center justify-center bg-[var(--surface)]/60 backdrop-blur-sm">
           <img src="/logo.jpg" alt={t('brand.tictoc') + ' ' + t('brand.xpoint')} className="w-20 h-20 sm:w-24 sm:h-24 lg:w-36 lg:h-36 rounded-2xl object-cover shadow-lg" />
         </div>
       </div>
 
-      {/* Orbiting icons */}
       {orbitIcons.map(({ Icon, angle, size, iconSize, tint, color, duration }, i) => (
         <div
           key={i}
@@ -122,7 +124,6 @@ export default function Home() {
     <div>
       {/* ── Hero ────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-[var(--border)]">
-        {/* Brand glow aura */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[var(--brand)]/[0.04] blur-3xl pointer-events-none animate-glow" style={{ animationDuration: '4s' }} />
         <div className="absolute top-1/3 right-0 w-[350px] h-[350px] rounded-full bg-[var(--accent)]/[0.03] blur-3xl pointer-events-none animate-glow" style={{ animationDuration: '5s', animationDelay: '1s' }} />
 
@@ -130,7 +131,6 @@ export default function Home() {
           {/* Text */}
           <div className="order-2 lg:order-1">
             <div className="animate-fade-up inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--brand-dim)] border border-[var(--brand)]/15 mb-5 relative overflow-hidden">
-              {/* Shimmer sweep */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent bg-[length:200%_100%] animate-shimmer pointer-events-none" />
               <img src="/logo.jpg" alt="" className="w-4 h-4 rounded object-cover relative" />
               <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--brand)] relative">
@@ -177,7 +177,13 @@ export default function Home() {
         <>
           {/* Categories */}
           {categories.length > 0 && (
-              <section className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+            <motion.section
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+              className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24"
+            >
               <div className="flex items-end justify-between mb-10">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--muted)] mb-3">{t('home.browse')}</p>
@@ -202,13 +208,19 @@ export default function Home() {
                     ? `/shop/${singleStore}?category=${encodeURIComponent(cat)}`
                     : `/shop`
 
-return (
+                  return (
+                    <motion.div
+                      key={cat}
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1], delay: idx * 0.08 }}
+                      className={isHiddenOnMobile ? 'hidden sm:block' : ''}
+                    >
                       <Link
-                        key={cat}
                         to={to}
-                        className={`${isHiddenOnMobile ? 'hidden sm:flex' : 'flex'} group relative items-center gap-5 surface-card p-5 sm:px-6 sm:py-5 transition-all duration-300 hover:border-[var(--brand)]/40 hover:shadow-card-h hover:-translate-y-0.5`}
+                        className="group relative flex items-center gap-5 surface-card p-5 sm:px-6 sm:py-5 transition-all duration-300 hover:border-[var(--brand)]/40 hover:shadow-card-h hover:-translate-y-0.5"
                       >
-                        {/* Icon */}
                         <div className="relative w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center transition-all duration-300"
                           style={{
                             background: isXpoint
@@ -219,19 +231,17 @@ return (
                             style={{ color: isXpoint ? 'var(--accent)' : 'var(--brand)' }} />
                         </div>
 
-                      {/* Label */}
-                      <div className="min-w-0 flex-1">
-                        <span className="inline-flex items-center gap-1.5 min-w-0 flex-1">
-                          <span className="text-[14px] sm:text-[15px] font-semibold text-[var(--text)] leading-tight truncate transition-colors group-hover:text-[var(--brand)]">
-                            {t('cat.' + cat) || cat}
+                        <div className="min-w-0 flex-1">
+                          <span className="inline-flex items-center gap-1.5 min-w-0 flex-1">
+                            <span className="text-[14px] sm:text-[15px] font-semibold text-[var(--text)] leading-tight truncate transition-colors group-hover:text-[var(--brand)]">
+                              {t('cat.' + cat) || cat}
+                            </span>
+                            <span className="text-[11px] text-[var(--muted)] font-medium shrink-0">{count}</span>
                           </span>
-                          <span className="text-[11px] text-[var(--muted)] font-medium shrink-0">{count}</span>
-                        </span>
-                      </div>
+                        </div>
 
-                      {/* Store badge */}
-                      {singleStore && (
-<span className="hidden sm:inline-block text-[10px] font-semibold uppercase tracking-[0.08em] rounded-full px-2.5 py-1 shrink-0"
+                        {singleStore && (
+                          <span className="hidden sm:inline-block text-[10px] font-semibold uppercase tracking-[0.08em] rounded-full px-2.5 py-1 shrink-0"
                             style={{
                               color: isXpoint ? 'var(--accent)' : 'var(--brand)',
                               background: isXpoint
@@ -243,23 +253,29 @@ return (
                             }}>
                             {singleStore === 'tictoc' ? t('brand.tictoc') : t('brand.xpoint')}
                           </span>
-                      )}
+                        )}
 
-                      {/* Hover arrow */}
-                      <ChevronRight
-                        size={16} strokeWidth={2}
-                        className="hidden sm:block shrink-0 text-[var(--muted)]/0 group-hover:text-[var(--brand)] transition-all duration-300 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
-                      />
-                    </Link>
+                        <ChevronRight
+                          size={16} strokeWidth={2}
+                          className="hidden sm:block shrink-0 text-[var(--muted)]/0 group-hover:text-[var(--brand)] transition-all duration-300 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+                        />
+                      </Link>
+                    </motion.div>
                   )
                 })}
               </div>
-            </section>
+            </motion.section>
           )}
 
           {/* Featured products */}
           {featured.length > 0 && (
-              <section className="bg-[var(--muted)]/5 border-y border-[var(--border)] py-16 sm:py-24">
+            <motion.section
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1], delay: 0.1 }}
+              className="bg-[var(--muted)]/5 border-y border-[var(--border)] py-16 sm:py-24"
+            >
               <div className="max-w-7xl mx-auto px-5 sm:px-8">
                 <div className="flex items-end justify-between mb-10">
                   <div>
@@ -271,16 +287,26 @@ return (
                   </Link>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
-                  {featured.map(p => <ProductCard key={p.id} product={p} />)}
+                  {featured.map((p, idx) => (
+                    <motion.div
+                      key={p.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1], delay: idx * 0.1 }}
+                    >
+                      <ProductCard product={p} />
+                    </motion.div>
+                  ))}
                 </div>
               </div>
-            </section>
+            </motion.section>
           )}
 
           {/* Brand story CTA */}
-            <section className="relative overflow-hidden border-y border-[var(--border)] bg-[var(--muted)]/[0.03] py-16 sm:py-24">
+          <section className="relative overflow-hidden border-y border-[var(--border)] bg-[var(--muted)]/[0.03] py-16 sm:py-24">
             <div className="max-w-6xl mx-auto px-5 sm:px-8">
-              <div className="text-center mb-14">
+              <motion.div className="text-center mb-14" {...fadeUp}>
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--accent-dim)] border border-[var(--accent)]/10 mb-6">
                   <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--accent)]">{t('home.whyUs')}</span>
                 </div>
@@ -288,30 +314,36 @@ return (
                 <p className="text-[15px] text-[var(--muted)] max-w-lg mx-auto leading-relaxed">
                   {t('home.whyUsDesc')}
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
+              <motion.div
+                className="grid sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto"
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.1 }}
+              >
                 {[
                   { Icon: ShieldCheck, titleKey: 'home.featureQuality', descKey: 'home.featureQualityDesc' },
                   { Icon: Truck, titleKey: 'home.featureShipping', descKey: 'home.featureShippingDesc' },
                   { Icon: MessageCircle, titleKey: 'home.featureSupport', descKey: 'home.featureSupportDesc' },
                 ].map(({ Icon, titleKey, descKey }) => (
-                    <div key={titleKey} className="surface-card p-6 sm:p-8 text-center">
+                  <motion.div key={titleKey} variants={staggerItem} className="surface-card p-6 sm:p-8 text-center">
                     <div className="w-12 h-12 rounded-2xl bg-[var(--brand-dim)] flex items-center justify-center mx-auto mb-5">
                       <Icon size={22} strokeWidth={1.5} className="text-[var(--brand)]" />
                     </div>
                     <h3 className="font-heading text-sm font-bold text-[var(--text)] mb-2">{t(titleKey)}</h3>
                     <p className="text-[13px] text-[var(--muted)] leading-relaxed">{t(descKey)}</p>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
 
-              <div className="text-center mt-12">
+              <motion.div className="text-center mt-12" {...fadeUp}>
                 <Link to="/about" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--brand)] hover:text-[var(--hot)] transition-colors">
                   {t('home.learnMore')}
                   <ArrowRight size={14} strokeWidth={2.5} />
                 </Link>
-              </div>
+              </motion.div>
             </div>
           </section>
         </>

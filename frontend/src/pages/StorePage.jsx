@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
-import { fetchProducts, fetchCategories } from '../api.js'
+import { fetchProducts } from '../api.js'
 import ProductCard from '../components/ProductCard.jsx'
 import { LoadingState, ErrorState } from '../components/StatusStates.jsx'
 import { getStore } from '../data/constants.js'
@@ -18,10 +18,10 @@ export default function StorePage() {
 
   const load = () => {
     setStatus('loading')
-    Promise.all([fetchProducts(storeSlug), fetchCategories(storeSlug)])
-      .then(([prods, cats]) => {
+    fetchProducts(storeSlug)
+      .then((prods) => {
         setProducts(prods)
-        setCategories(['All', ...cats])
+        setCategories(['All', ...new Set(prods.map(p => p.category))])
         setStatus('ready')
       })
       .catch(() => setStatus('error'))
@@ -45,12 +45,12 @@ export default function StorePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
-      <div className="mb-8">
+      <div className="animate-fade-up mb-8">
         <h1 className="text-display text-[var(--text)] mb-1">{store.slug === 'xpoint' ? t('brand.xpoint') : t('brand.tictoc')}</h1>
         <p className="text-sm text-[var(--muted)]">{t('store.subtitle.' + store.slug)}</p>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-10">
+      <div className="animate-fade-up flex flex-wrap gap-2 mb-10">
         {categories.map(cat => (
           <button
             key={cat}
@@ -72,9 +72,7 @@ export default function StorePage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
-          {filtered.map(p => (
-            <ProductCard key={p.id} product={p} />
-          ))}
+          {filtered.map(p => <ProductCard key={p.id} product={p} />)}
         </div>
       )}
     </div>

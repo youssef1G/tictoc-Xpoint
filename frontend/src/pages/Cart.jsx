@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { useCart } from '../context/CartContext.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
+import { fadeUp, scaleIn, staggerContainer, staggerItem } from '../lib/animations.js'
 
 export default function Cart() {
   const { t } = useLocale()
@@ -9,7 +11,7 @@ export default function Cart() {
 
   if (items.length === 0) {
     return (
-      <div className="max-w-xl mx-auto px-5 py-24 text-center">
+      <motion.div className="max-w-xl mx-auto px-5 py-24 text-center" {...scaleIn}>
         <div className="w-16 h-16 rounded-full bg-[var(--brand-dim)] flex items-center justify-center mx-auto mb-5">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[var(--brand)]">
             <circle cx="9" cy="21" r="1" /><circle cx="19" cy="21" r="1" />
@@ -21,17 +23,22 @@ export default function Cart() {
         <Link to="/shop" className="btn-primary">
           {t('cart.shopNow')}
         </Link>
-      </div>
+      </motion.div>
     )
   }
 
   return (
     <div className="max-w-3xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
-      <h1 className="text-display text-[var(--text)] mb-8">{t('cart.title')}</h1>
+      <motion.h1 className="text-display text-[var(--text)] mb-8" {...fadeUp}>{t('cart.title')}</motion.h1>
 
-      <ul className="space-y-6">
+      <motion.ul className="space-y-6"
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.1 }}
+      >
         {items.map((item) => (
-          <li key={item.id} className="flex gap-5 border-b border-[var(--border)] pb-6">
+          <motion.li key={item.id} variants={staggerItem} className="flex gap-5 border-b border-[var(--border)] pb-6">
             <img
               src={item.images?.[0] || item.image}
               alt={item.name}
@@ -67,25 +74,31 @@ export default function Cart() {
             <p className="text-[15px] font-semibold text-[var(--text)] whitespace-nowrap">
               {egp(item.price * item.quantity)}
             </p>
-          </li>
+          </motion.li>
         ))}
-      </ul>
+      </motion.ul>
 
-      <div className="mt-8 flex items-center justify-between font-heading text-lg font-semibold">
+      <motion.div className="mt-8 flex items-center justify-between font-heading text-lg font-semibold" {...fadeUp}>
         <span className="text-[var(--text)]">{t('cart.subtotal')}</span>
         <span className="text-[var(--text)]">{egp(subtotal)}</span>
-      </div>
-      <p className="text-[11px] text-[var(--muted)] mt-1">
-        {t('cart.shippingCalculated')}
-      </p>
+      </motion.div>
+      <motion.p className="text-[11px] text-[var(--muted)] mt-1" {...fadeUp}>{t('cart.shippingCalculated')}</motion.p>
 
-      <Link to="/checkout" className="btn-primary w-full py-3.5 mt-6 text-sm">
-        {t('cart.proceedToCheckout')}
-      </Link>
+      <motion.div {...fadeUp}>
+        <Link to="/checkout" className="btn-primary w-full py-3.5 mt-6 text-sm inline-block text-center">
+          {t('cart.proceedToCheckout')}
+        </Link>
+      </motion.div>
 
-      <Link to="/shop" className="block text-center mt-4 text-sm font-medium text-[var(--brand)] hover:underline">
-        {t('cart.continueShopping')}
-      </Link>
+      <motion.div className="text-center mt-4" initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+      >
+        <Link to="/shop" className="text-sm font-medium text-[var(--brand)] hover:underline">
+          {t('cart.continueShopping')}
+        </Link>
+      </motion.div>
     </div>
   )
 }

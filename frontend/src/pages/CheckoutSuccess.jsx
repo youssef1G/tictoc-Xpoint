@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { useCart } from '../context/CartContext.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
+import { scaleIn } from '../lib/animations.js'
 
 export default function CheckoutSuccess() {
   const { t } = useLocale()
@@ -12,12 +14,23 @@ export default function CheckoutSuccess() {
   useEffect(() => { clearCart() }, [])
 
   return (
-    <div className="max-w-lg mx-auto px-5 py-24 text-center">
+    <motion.div className="max-w-lg mx-auto px-5 py-24 text-center" {...scaleIn}>
       <div className="w-16 h-16 rounded-full bg-green-50 dark:bg-green-900/20 border border-green-200 flex items-center justify-center mx-auto mb-5">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5">
+        <motion.svg
+          width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
+        >
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" strokeLinecap="round" strokeLinejoin="round"/>
-          <polyline points="22 4 12 14.01 9 11.01" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+          <motion.polyline
+            points="22 4 12 14.01 9 11.01"
+            strokeLinecap="round" strokeLinejoin="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.4, ease: 'easeOut', delay: 0.7 }}
+          />
+        </motion.svg>
       </div>
       <h1 className="text-display text-[var(--text)] mb-3">{t('checkoutSuccess.title')}</h1>
       <p className="text-sm text-[var(--muted)] mb-2">
@@ -36,6 +49,6 @@ export default function CheckoutSuccess() {
           {t('checkoutSuccess.continue')}
         </Link>
       </div>
-    </div>
+    </motion.div>
   )
 }

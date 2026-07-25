@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { motion } from 'motion/react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useLocale } from '../../context/LocaleContext.jsx'
@@ -81,8 +82,20 @@ export default function AdminOrders() {
   if (!orders.length) return <p className="text-sm text-[var(--muted)] py-10 text-center">{t('admin.orders.noOrders')}</p>
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap gap-2">
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4 }}
+      className="space-y-5"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.35 }}
+        className="flex flex-wrap gap-2"
+      >
         <button onClick={() => setFilter('all')}
           className={`text-xs font-semibold border rounded-full px-3 py-1 transition-colors ${
             filter === 'all' ? 'bg-[var(--brand)] text-white border-[var(--brand)]' : 'text-[var(--muted)] border-[var(--border)] hover:border-[var(--brand)]'
@@ -99,21 +112,39 @@ export default function AdminOrders() {
             {statusLabel[status] || status} · {count}
           </button>
         ))}
-      </div>
+      </motion.div>
 
-      <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+      <motion.input
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.35 }}
+        type="text" value={search} onChange={e => setSearch(e.target.value)}
         placeholder={t('admin.orders.searchPlaceholder')}
         className="w-full rounded-full border border-[var(--border)] px-5 py-2.5 text-sm bg-[var(--surface)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]" />
 
-      <p className="text-xs text-[var(--muted)]">
+      <motion.p
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+        className="text-xs text-[var(--muted)]"
+      >
         {t('admin.orders.showing', { filtered: filtered.length, total: orders.length, s: orders.length !== 1 ? 's' : '' })}
-      </p>
+      </motion.p>
 
       {filtered.length === 0 ? (
         <p className="text-sm text-[var(--muted)] text-center py-10">{t('admin.orders.noMatch')}</p>
       ) : (
-        filtered.map(order => (
-          <div key={order.id} className="surface-card">
+        filtered.map((order, idx) => (
+          <motion.div
+            key={order.id}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.35, delay: idx * 0.06 }}
+            className="surface-card"
+          >
             <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 bg-[var(--muted)]/5 border-b border-[var(--border)] rounded-t-2xl">
               <div className="flex items-center gap-2.5">
                 <span className="font-mono text-[11px] text-[var(--muted)]">{order.id}</span>
@@ -174,9 +205,9 @@ export default function AdminOrders() {
                 {saving[order.id] && <p className="text-xs text-[var(--muted)] animate-pulse">{t('admin.orders.saving')}</p>}
               </div>
             </div>
-          </div>
+          </motion.div>
         ))
       )}
-    </div>
+    </motion.div>
   )
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { motion } from 'motion/react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useLocale } from '../../context/LocaleContext.jsx'
 import { fetchAnalytics } from '../../api.js'
@@ -156,10 +157,13 @@ export default function AdminAnalytics() {
           const Icon = cfg.icon
           const val = formatValue(cfg.key, data[cfg.valueKey], t)
           return (
-            <div
+            <motion.div
               key={cfg.key}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.08 }}
               className="surface-card p-5"
-              style={{ animationDelay: `${i * 80}ms` }}
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="w-9 h-9 rounded-xl bg-[var(--brand-dim)] flex items-center justify-center">
@@ -172,12 +176,18 @@ export default function AdminAnalytics() {
               <p className={`font-heading text-2xl font-bold tracking-tight ${cfg.accent ? 'text-[var(--brand)]' : 'text-[var(--text)]'}`}>
                 {val}
               </p>
-            </div>
+            </motion.div>
           )
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: 0.35 }}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      >
         <div className="surface-card p-5">
           <div className="flex items-center justify-between mb-5">
             <h3 className="font-heading text-sm font-bold text-[var(--text)]">{t('admin.analytics.ordersByStatus')}</h3>
@@ -228,7 +238,7 @@ export default function AdminAnalytics() {
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

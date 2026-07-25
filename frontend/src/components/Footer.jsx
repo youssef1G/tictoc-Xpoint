@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { useLocale } from '../context/LocaleContext.jsx'
+import { fadeIn } from '../lib/animations.js'
 
 export default function Footer() {
   const { t } = useLocale()
   return (
-    <footer className="border-t border-[var(--border)] bg-[var(--surface)] mt-16">
+    <motion.footer className="border-t border-[var(--border)] bg-[var(--surface)] mt-16" {...fadeIn}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-10 sm:pt-12 pb-6">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
 
@@ -82,6 +84,6 @@ export default function Footer() {
           </a>
         </p>
       </div>
-    </footer>
+    </motion.footer>
   )
 }

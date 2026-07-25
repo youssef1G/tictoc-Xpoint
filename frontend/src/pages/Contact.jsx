@@ -1,7 +1,9 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { submitComplaint } from '../api.js'
 import { useLocale } from '../context/LocaleContext.jsx'
+import { fadeUp, scaleIn } from '../lib/animations.js'
 
 function validate(form, t) {
   const e = {}
@@ -74,7 +76,7 @@ export default function Contact() {
 
   if (success) {
     return (
-      <div className="max-w-lg mx-auto px-5 py-24 text-center">
+      <motion.div className="max-w-lg mx-auto px-5 py-24 text-center" {...scaleIn}>
         <div className="w-16 h-16 rounded-full bg-[var(--brand-dim)] flex items-center justify-center mx-auto mb-5">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--brand)]">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" strokeLinecap="round" strokeLinejoin="round"/>
@@ -84,21 +86,26 @@ export default function Contact() {
         <h2 className="text-heading-lg text-[var(--text)] mb-2">{t('contact.received')}</h2>
         <p className="text-sm text-[var(--muted)] mb-8">{t('contact.receivedDesc')}</p>
         <Link to="/" className="btn-primary text-sm">{t('contact.backHome')}</Link>
-      </div>
+      </motion.div>
     )
   }
 
   return (
     <div className="max-w-xl mx-auto px-5 sm:px-8 py-14 sm:py-20">
-      <div className="text-center mb-10">
+      <motion.div className="text-center mb-10" {...fadeUp}>
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--brand-dim)] border border-[var(--brand)]/10 mb-4">
           <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand)]">{t('contact.badge')}</span>
         </div>
         <h1 className="text-display text-[var(--text)] mb-2">{t('contact.title')}</h1>
         <p className="text-sm text-[var(--muted)]">{t('contact.desc')}</p>
-      </div>
+      </motion.div>
 
-      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+      <motion.form onSubmit={handleSubmit} className="space-y-5" noValidate
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1], delay: 0.1 }}
+      >
         <Field label={t('contact.fullName')} error={errors.name}>
           <input value={form.name} onChange={set('name')} onKeyDown={e => next(e, phoneRef)}
             placeholder={t('contact.namePlaceholder')} className={inputCls('name')} />
@@ -118,7 +125,7 @@ export default function Contact() {
           className="btn-primary w-full py-3.5 text-sm disabled:opacity-50">
           {loading ? t('contact.sending') : t('contact.send')}
         </button>
-      </form>
+      </motion.form>
     </div>
   )
 }

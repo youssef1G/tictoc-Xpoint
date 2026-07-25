@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { motion } from 'motion/react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useLocale } from '../../context/LocaleContext.jsx'
@@ -114,8 +115,19 @@ export default function AdminSupport() {
   const pendingReturns = returns.filter(r => r.status === 'pending').length
 
   return (
-    <div>
-      <div className="flex gap-2 mb-6">
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4 }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.35 }}
+        className="flex gap-2 mb-6"
+      >
         <button onClick={() => setTab('complaints')}
           className={`px-4 py-2 rounded-full text-[13px] font-medium transition-colors ${
             tab === 'complaints' ? 'bg-[var(--brand)] text-white' : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--muted)]/10'
@@ -128,21 +140,53 @@ export default function AdminSupport() {
           }`}>
           {t('admin.support.returns', { count: pendingReturns })} {pendingReturns > 0 && <span className="ml-1.5 bg-white text-[var(--brand)] text-[10px] rounded-full px-1.5 py-0.5">{pendingReturns}</span>}
         </button>
-      </div>
+      </motion.div>
       {tab === 'complaints' && (
-        <div className="space-y-4">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="space-y-4"
+        >
           {complaints.length === 0
             ? <p className="text-sm text-[var(--muted)] text-center py-10">{t('admin.support.noComplaints')}</p>
-            : complaints.map(c => <SupportCard key={c.id} item={c} onStatusChange={handleComplaintStatus} onDelete={() => handleDelete(c.id, 'complaints')} saving={saving[c.id]} deleting={deleting === c.id} />)}
-        </div>
+            : complaints.map((c, idx) => (
+              <motion.div
+                key={c.id}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: idx * 0.05 }}
+              >
+                <SupportCard key={c.id} item={c} onStatusChange={handleComplaintStatus} onDelete={() => handleDelete(c.id, 'complaints')} saving={saving[c.id]} deleting={deleting === c.id} />
+              </motion.div>
+            ))}
+        </motion.div>
       )}
       {tab === 'returns' && (
-        <div className="space-y-4">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="space-y-4"
+        >
           {returns.length === 0
             ? <p className="text-sm text-[var(--muted)] text-center py-10">{t('admin.support.noReturns')}</p>
-            : returns.map(r => <SupportCard key={r.id} item={r} onStatusChange={handleReturnStatus} onDelete={() => handleDelete(r.id, 'returns')} saving={saving[r.id]} deleting={deleting === r.id} />)}
-        </div>
+            : returns.map((r, idx) => (
+              <motion.div
+                key={r.id}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: idx * 0.05 }}
+              >
+                <SupportCard item={r} onStatusChange={handleReturnStatus} onDelete={() => handleDelete(r.id, 'returns')} saving={saving[r.id]} deleting={deleting === r.id} />
+              </motion.div>
+            ))}
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   )
 }

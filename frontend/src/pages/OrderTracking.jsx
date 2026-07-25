@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { fetchOrder } from '../api.js'
 import { useLocale } from '../context/LocaleContext.jsx'
+import { fadeUp, staggerContainer, staggerItem } from '../lib/animations.js'
 
 const STEPS = [
   { key: 'pending',   labelKey: 'order.placed',   icon: '🛍️' },
@@ -53,23 +55,33 @@ export default function OrderTracking() {
 
   return (
     <div className="max-w-2xl mx-auto px-5 sm:px-8 py-10 sm:py-14 space-y-8">
-      <div>
+      <motion.div {...fadeUp}>
         <p className="text-xs font-mono text-[var(--muted)] mb-1">{order.id}</p>
         <h1 className="text-heading-lg text-[var(--text)]">{t('tracking.title')}</h1>
-      </div>
+      </motion.div>
 
       {order.estimated_delivery && !cancelled && (
-        <div className="surface-card p-5 flex items-center gap-4">
+        <motion.div className="surface-card p-5 flex items-center gap-4"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1], delay: 0.1 }}
+        >
           <span className="text-2xl">{'📅'}</span>
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--brand)]">{t('tracking.estimatedDelivery')}</p>
             <p className="font-heading text-lg font-semibold text-[var(--text)]">{formatDate(order.estimated_delivery)}</p>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {!cancelled ? (
-        <div className="surface-card p-6">
+        <motion.div className="surface-card p-6"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1], delay: 0.2 }}
+        >
           <div className="relative">
             <div className="absolute top-5 left-5 right-5 h-0.5 bg-[var(--border)]" />
             <div className="absolute top-5 left-5 h-0.5 bg-[var(--brand)] transition-all duration-700"
@@ -93,15 +105,25 @@ export default function OrderTracking() {
               })}
             </div>
           </div>
-        </div>
+        </motion.div>
       ) : (
-        <div className="surface-card p-5 text-center">
+        <motion.div className="surface-card p-5 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
           <p className="text-2xl mb-2">{'❌'}</p>
           <p className="font-semibold text-[var(--text)]">{t('tracking.cancelled')}</p>
-        </div>
+        </motion.div>
       )}
 
-      <div className="surface-card p-5 space-y-4">
+      <motion.div className="surface-card p-5 space-y-4"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1], delay: 0.3 }}
+      >
         <h2 className="font-heading text-base font-semibold text-[var(--text)]">{t('tracking.details')}</h2>
         <div className="grid sm:grid-cols-2 gap-2 text-xs">
           <div>
@@ -135,9 +157,14 @@ export default function OrderTracking() {
             <span>{egp(order.total)}</span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="flex gap-3">
+      <motion.div className="flex gap-3"
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+      >
         <button onClick={load}
           className="text-xs font-medium text-[var(--muted)] border border-[var(--border)] rounded-full px-4 py-2 hover:text-[var(--text)] transition-colors">
           {t('tracking.refresh')}
@@ -146,7 +173,7 @@ export default function OrderTracking() {
           className="text-xs font-medium text-[var(--muted)] border border-[var(--border)] rounded-full px-4 py-2 hover:text-[var(--text)] transition-colors">
           {t('tracking.backOrders')}
         </Link>
-      </div>
+      </motion.div>
     </div>
   )
 }

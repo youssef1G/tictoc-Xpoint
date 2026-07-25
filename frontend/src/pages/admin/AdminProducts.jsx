@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
+import { motion } from 'motion/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { fetchProducts, deleteProduct, updateProduct } from '../../api.js'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useLocale } from '../../context/LocaleContext.jsx'
-import { LoadingState, ErrorState } from '../../components/StatusStates.jsx'
+import { ErrorState } from '../../components/StatusStates.jsx'
 import CustomSelect from '../../components/CustomSelect.jsx'
 
 function SortIcon({ dir }) {
@@ -122,17 +123,27 @@ export default function AdminProducts() {
     )
   }
 
-  if (status === 'loading') return <LoadingState label={t('store.loading')} />
-  if (status === 'error') return <ErrorState message={t('store.loadError')} onRetry={load} />
-
   return (
-    <div className="space-y-6">
-      <div>
+    <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }} className="space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.35 }}
+      >
         <h2 className="font-heading text-xl font-bold text-[var(--text)]">{t('admin.products.title')}</h2>
         <p className="text-xs text-[var(--muted)] mt-1">{t('admin.products.subtitle')}</p>
-      </div>
+      </motion.div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      {status === 'error' && <ErrorState message={t('store.loadError')} onRetry={load} />}
+
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.35 }}
+        className="flex flex-wrap items-center gap-3"
+      >
         <div className="relative w-full sm:flex-1 sm:min-w-[200px] sm:max-w-xs">
           <svg xmlns="http://www.w3.org/2000/svg" className="absolute top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" style={{ [lang === 'ar' ? 'right' : 'left']: '0.75rem' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
@@ -159,11 +170,38 @@ export default function AdminProducts() {
         <div className="hidden sm:block flex-1" />
         <p className="text-xs text-[var(--muted)] sm:self-center">{t('admin.products.count', { count: filtered.length, total: products.length, s: products.length !== 1 ? 's' : '' })}</p>
         <Link to="/admin/products/new" className="btn-primary text-xs">{t('admin.products.addProduct')}</Link>
-      </div>
+      </motion.div>
 
       {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{error}</p>}
 
-      {filtered.length === 0 ? (
+      {status === 'loading' ? (
+        <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
+          <table className="w-full text-sm">
+            <thead className="bg-[var(--muted)]/5 text-left">
+              <tr>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.products.product')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden md:table-cell">{t('admin.products.store')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden md:table-cell">{t('admin.products.category')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">{t('admin.products.price')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] hidden sm:table-cell">{t('admin.products.stock')}</th>
+                <th scope="col" className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted)] text-right">{t('admin.products.actions')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i} className="border-t border-[var(--border)]">
+                  <td className="px-4 py-3"><div className="flex items-center gap-3"><div className="h-10 w-10 rounded-xl bg-[var(--muted)]/10 animate-pulse" /><div className="h-4 w-32 bg-[var(--muted)]/10 rounded animate-pulse" /></div></td>
+                  <td className="px-4 py-3 hidden md:table-cell"><div className="h-3 w-16 bg-[var(--muted)]/10 rounded animate-pulse" /></td>
+                  <td className="px-4 py-3 hidden md:table-cell"><div className="h-3 w-20 bg-[var(--muted)]/10 rounded animate-pulse" /></td>
+                  <td className="px-4 py-3"><div className="h-4 w-14 bg-[var(--muted)]/10 rounded animate-pulse" /></td>
+                  <td className="px-4 py-3 hidden sm:table-cell"><div className="h-3 w-12 bg-[var(--muted)]/10 rounded animate-pulse" /></td>
+                  <td className="px-4 py-3"><div className="h-3 w-16 bg-[var(--muted)]/10 rounded animate-pulse ml-auto" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="surface-card p-12 text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[var(--brand-dim)] flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-[var(--brand)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
@@ -198,8 +236,15 @@ export default function AdminProducts() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(p => (
-                <tr key={p.id} className="border-t border-[var(--border)] hover:bg-[var(--muted)]/5 transition-colors">
+              {filtered.map((p, idx) => (
+                <motion.tr
+                  key={p.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: idx * 0.04 }}
+                  className="border-t border-[var(--border)] hover:bg-[var(--muted)]/5 transition-colors"
+                >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <img src={p.images?.[0] || p.image} alt={p.name}
@@ -237,7 +282,7 @@ export default function AdminProducts() {
                         <button onClick={() => setEditingStockId(null)}
                           className="text-xs text-[var(--muted)] hover:text-[var(--text)]">✕</button>
                       </div>
-                    ) : (
+                      ) : (
                       <button onClick={() => startEditStock(p)} className="flex items-center gap-1.5 group">
                         {stockBadge(p.stock)}
                         <span className="text-[10px] text-[var(--muted)]/30 group-hover:text-[var(--brand)] transition">✎</span>
@@ -254,12 +299,12 @@ export default function AdminProducts() {
                       </button>
                     </div>
                   </td>
-                </tr>
-              ))}
+                  </motion.tr>
+                ))}
             </tbody>
           </table>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

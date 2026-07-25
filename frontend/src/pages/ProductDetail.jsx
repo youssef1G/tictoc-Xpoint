@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, Navigate } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { fetchProduct, fetchProducts } from '../api.js'
 import { useCart } from '../context/CartContext.jsx'
 import ProductCard from '../components/ProductCard.jsx'
 import ProductGallery from '../components/ProductGallery.jsx'
 import { LoadingState, ErrorState } from '../components/StatusStates.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
+import { fadeUp, staggerContainer, staggerItem } from '../lib/animations.js'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -49,16 +51,24 @@ export default function ProductDetail() {
 
   return (
     <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
-      <nav className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8">
+      <motion.nav className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8"
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+      >
         <Link to="/shop" className="hover:text-[var(--brand)]">{t('productDetail.shop')}</Link>
         <span>/</span>
         <Link to={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:text-[var(--brand)]">{t('cat.' + product.category) || product.category}</Link>
         <span>/</span>
         <span className="text-[var(--text)]">{product.name}</span>
-      </nav>
+      </motion.nav>
 
       <div className="grid md:grid-cols-2 gap-10 sm:gap-16">
-        <div className="relative">
+        <motion.div className="relative"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: 0.1 }}
+        >
           <ProductGallery images={product.images} image={product.image} name={product.name} />
           {outOfStock ? (
             <div className="absolute top-4 left-4 bg-[var(--text)]/80 text-[var(--bg)] text-xs font-semibold uppercase tracking-[0.08em] px-4 py-1.5 rounded-full backdrop-blur-sm">
@@ -69,9 +79,13 @@ export default function ProductDetail() {
               {product.tag}
             </span>
           ) : null}
-        </div>
+        </motion.div>
 
-        <div className="flex flex-col justify-start">
+        <motion.div className="flex flex-col justify-start"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: 0.2 }}
+        >
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)] mb-2">{product.category}</p>
           <h1 className="text-display text-[var(--text)]">{product.name}</h1>
           <p className="text-2xl font-bold text-[var(--text)] mt-3">
@@ -124,21 +138,31 @@ export default function ProductDetail() {
               {t('productDetail.viewCart')}
             </button>
           )}
-        </div>
+        </motion.div>
       </div>
 
       {related.length > 0 && (
-        <section className="mt-20 sm:mt-28">
+        <motion.section className="mt-20 sm:mt-28" {...fadeUp}>
           <div className="flex items-end justify-between mb-8">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--muted)] mb-1">{t('productDetail.related')}</p>
               <h2 className="text-heading-lg text-[var(--text)]">{t('productDetail.alsoLike')}</h2>
             </div>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 sm:gap-6">
-            {related.map(p => <ProductCard key={p.id} product={p} />)}
-          </div>
-        </section>
+          <motion.div
+            className="grid grid-cols-2 sm:grid-cols-4 gap-5 sm:gap-6"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.1 }}
+          >
+            {related.map(p => (
+              <motion.div key={p.id} variants={staggerItem}>
+                <ProductCard product={p} />
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.section>
       )}
     </div>
   )

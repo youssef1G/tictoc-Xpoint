@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { motion } from 'motion/react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useLocale } from '../../context/LocaleContext.jsx'
 import { fetchSettings, upsertSetting } from '../../api.js'
@@ -44,16 +45,33 @@ export default function AdminSettings() {
   const thresh = Math.max(0, Number(threshold) || 0)
 
   return (
-    <div className="space-y-6">
-      <div>
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4 }}
+      className="space-y-6"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.35 }}
+      >
         <h2 className="font-heading text-xl font-bold text-[var(--text)]">{t('admin.settings.title')}</h2>
         <p className="text-xs text-[var(--muted)] mt-1">{t('admin.settings.subtitle')}</p>
-      </div>
+      </motion.div>
 
       {error && <p className="text-xs text-red-600 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3">{error}</p>}
       {success && <p className="text-xs text-green-600 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-xl px-4 py-3">{success}</p>}
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.35, delay: 0.1 }}
+        className="grid gap-6 lg:grid-cols-2"
+      >
         <div className="surface-card p-6">
           <form onSubmit={e => { e.preventDefault(); save('shipping', shipping) }}>
             <label className="block text-xs font-semibold text-[var(--text)] mb-1.5">{t('admin.settings.shippingFee')}</label>
@@ -93,9 +111,15 @@ export default function AdminSettings() {
             </button>
           </form>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="surface-card p-5">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.35, delay: 0.2 }}
+        className="surface-card p-5"
+      >
         <h3 className="font-heading text-sm font-bold text-[var(--text)] mb-3">{t('admin.settings.preview')}</h3>
         {thresh > 0 && fee > 0 ? (
           <div className="text-xs space-y-3">
@@ -125,7 +149,7 @@ export default function AdminSettings() {
             <div className="flex justify-between font-semibold text-[var(--text)] pt-1 border-t border-[var(--border)]"><span>{t('admin.settings.total')}</span><span>EGP 0</span></div>
           </div>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

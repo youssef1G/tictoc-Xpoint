@@ -1,8 +1,10 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { motion } from 'motion/react'
 import { useCart } from '../context/CartContext.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
 import { createCodOrder } from '../api.js'
+import { fadeUp, fadeLeft, fadeRight } from '../lib/animations.js'
 
 const BASE = import.meta.env.VITE_API_URL || 'http://localhost:4242'
 
@@ -107,14 +109,22 @@ export default function Checkout() {
 
   return (
     <div className="max-w-5xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
-      <nav className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8">
+      <motion.nav className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8"
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+      >
         <Link to="/cart" className="hover:text-[var(--brand)]">{t('checkout.cart')}</Link>
         <span>/</span>
         <span className="text-[var(--text)]">{t('checkout.checkout')}</span>
-      </nav>
+      </motion.nav>
 
       <div className="grid lg:grid-cols-5 gap-10">
-        <form onSubmit={handleSubmit} className="lg:col-span-3 space-y-8" noValidate>
+        <motion.form onSubmit={handleSubmit} className="lg:col-span-3 space-y-8" noValidate
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1], delay: 0.1 }}
+        >
           <div>
             <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4">{t('checkout.contactDetails')}</h2>
             <div className="space-y-4">
@@ -165,9 +175,13 @@ export default function Checkout() {
             className="btn-primary w-full py-3.5 text-sm disabled:opacity-50">
             {loading ? t('checkout.placingOrder') : t('checkout.placeOrder')}
           </button>
-        </form>
+        </motion.form>
 
-        <div className="lg:col-span-2">
+        <motion.div className="lg:col-span-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1], delay: 0.15 }}
+        >
           <div className="sticky top-24 surface-card p-6">
             <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4">{t('checkout.orderSummary')}</h2>
             <ul className="space-y-3 mb-4">
@@ -214,7 +228,7 @@ export default function Checkout() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   )

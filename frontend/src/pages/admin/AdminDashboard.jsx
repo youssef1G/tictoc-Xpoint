@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { motion } from 'motion/react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useLocale } from '../../context/LocaleContext.jsx'
 import { fetchDashboard, fetchOrders, fetchProducts } from '../../api.js'
@@ -63,37 +64,56 @@ export default function AdminDashboard() {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="surface-card h-24 animate-pulse" />
-        ))}
-      </div>
-      <div className="surface-card h-64 animate-pulse" />
-    </div>
-  )
-
-  if (!stats) return null
-
   const lowStockProducts = products.filter(p => p.stock != null && p.stock <= 10)
 
   return (
-    <div className="space-y-6">
-      <div>
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4 }}
+      className="space-y-6"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.35 }}
+      >
         <h2 className="font-heading text-xl font-bold text-[var(--text)]">{t('admin.dashboard.title')}</h2>
         <p className="text-xs text-[var(--muted)] mt-1">{t('admin.dashboard.subtitle')}</p>
-      </div>
+      </motion.div>
 
+      {loading ? (
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="surface-card h-24 animate-pulse" />
+            ))}
+          </div>
+          <div className="surface-card h-64 animate-pulse" />
+        </>
+      ) : !stats ? null : (<>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label={t('admin.dashboard.revenue')} value={t('admin.dashboard.deliveredRevenue', { amount: Number(stats.deliveredRevenue || 0).toFixed(0) })} icon={<DollarSign size={20} />} accent="text-[var(--brand)]" />
-        <StatCard label={t('admin.dashboard.totalOrders')} value={stats.totalOrders || 0} icon={<ShoppingBag size={20} />} />
-        <StatCard label={t('admin.dashboard.pending')} value={stats.pendingOrders || 0} icon={<Clock size={20} />}
-          accent={stats.pendingOrders > 0 ? 'text-amber-500' : 'text-[var(--text)]'} />
-        <StatCard label={t('admin.dashboard.products')} value={stats.totalProducts || 0} icon={<Package size={20} />} />
+        {[
+          { label: t('admin.dashboard.revenue'), value: t('admin.dashboard.deliveredRevenue', { amount: Number(stats.deliveredRevenue || 0).toFixed(0) }), icon: <DollarSign size={20} />, accent: 'text-[var(--brand)]' },
+          { label: t('admin.dashboard.totalOrders'), value: stats.totalOrders || 0, icon: <ShoppingBag size={20} />, accent: '' },
+          { label: t('admin.dashboard.pending'), value: stats.pendingOrders || 0, icon: <Clock size={20} />, accent: stats.pendingOrders > 0 ? 'text-amber-500' : 'text-[var(--text)]' },
+          { label: t('admin.dashboard.products'), value: stats.totalProducts || 0, icon: <Package size={20} />, accent: '' },
+        ].map((s, i) => (
+          <motion.div key={s.label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.08 }}>
+            <StatCard label={s.label} value={s.value} icon={s.icon} accent={s.accent} />
+          </motion.div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: 0.35 }}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      >
         <div className="surface-card p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-heading text-sm font-bold text-[var(--text)]">{t('admin.dashboard.recentOrders')}</h3>
@@ -138,16 +158,18 @@ export default function AdminDashboard() {
                   <div className="flex items-center gap-3 min-w-0">
                     <img src={p.images?.[0] || p.image} alt={p.name} className="h-8 w-8 rounded-lg object-cover bg-[var(--muted)]/5 shrink-0" />
                     <span className="text-xs font-medium text-[var(--text)] truncate">{p.name}</span>
+                    <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-400 shrink-0 ml-3">
+                      {p.stock === 0 ? t('admin.dashboard.outOfStock') : t('admin.dashboard.left', { count: p.stock })}
+                    </span>
                   </div>
-                  <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-400 shrink-0 ml-3">
-                    {p.stock === 0 ? t('admin.dashboard.outOfStock') : t('admin.dashboard.left', { count: p.stock })}
-                  </span>
                 </div>
               ))}
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </>
+    )}
+    </motion.div>
   )
 }
