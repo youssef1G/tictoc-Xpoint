@@ -27,6 +27,7 @@ import AdminSupport   from './pages/admin/AdminSupport'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
 import AdminCustomers from './pages/admin/AdminCustomers'
 import AdminSettings  from './pages/admin/AdminSettings'
+import AdminCategories from './pages/admin/AdminCategories'
 import Contact        from './pages/Contact'
 import ScrollToTop    from './components/ScrollToTop'
 
@@ -88,6 +89,7 @@ export default function App() {
           <Route path="support" element={<AdminSupport />} />
           <Route path="manage" element={<AdminManage />} />
           <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="categories" element={<AdminCategories />} />
           <Route path="customers" element={<AdminCustomers />} />
           <Route path="shipping" element={<AdminSettings />} />
         </Route>

@@ -10,6 +10,9 @@ import {
   getAllProducts,
   getProductById,
   getAllCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -151,6 +154,46 @@ app.get('/api/categories', async (req, res) => {
   try {
     res.json(await getAllCategories(req.query.store || null))
   } catch (err) {
+    sendError(res, err)
+  }
+})
+
+app.post('/api/admin/categories', requireAdmin, async (req, res) => {
+  try {
+    const { name, store } = req.body
+    if (!name || !name.trim()) return res.status(400).json({ error: 'Category name is required' })
+    if (!store || !['xpoint', 'tictoc'].includes(store)) return res.status(400).json({ error: 'Valid store (xpoint or tictoc) is required' })
+    const category = await createCategory({ name: name.trim(), store })
+    res.status(201).json(category)
+  } catch (err) {
+    if (err.message === 'Category already exists') return res.status(409).json({ error: err.message })
+    sendError(res, err)
+  }
+})
+
+app.put('/api/admin/categories/:name', requireAdmin, async (req, res) => {
+  try {
+    const currentName = decodeURIComponent(req.params.name)
+    const { name, store } = req.body
+    if (!name || !name.trim()) return res.status(400).json({ error: 'Category name is required' })
+    if (!store || !['xpoint', 'tictoc'].includes(store)) return res.status(400).json({ error: 'Valid store (xpoint or tictoc) is required' })
+    const category = await updateCategory(currentName, { name: name.trim(), store })
+    res.json(category)
+  } catch (err) {
+    if (err.message === 'Category not found') return res.status(404).json({ error: err.message })
+    if (err.message.includes('already exists')) return res.status(409).json({ error: err.message })
+    sendError(res, err)
+  }
+})
+
+app.delete('/api/admin/categories/:name', requireAdmin, async (req, res) => {
+  try {
+    const name = decodeURIComponent(req.params.name)
+    const store = req.query.store || null
+    await deleteCategory(name, store)
+    res.json({ ok: true })
+  } catch (err) {
+    if (err.message === 'Category not found') return res.status(404).json({ error: err.message })
     sendError(res, err)
   }
 })

@@ -270,6 +270,7 @@ export default {
   // AdminLayout
   'admin.sidebar.dashboard': 'لوحة التحكم',
   'admin.sidebar.products': 'المنتجات',
+  'admin.sidebar.categories': 'الأقسام',
   'admin.sidebar.orders': 'الطلبات',
   'admin.sidebar.support': 'الدعم',
   'admin.sidebar.analytics': 'التحليلات',
@@ -328,6 +329,28 @@ export default {
   'admin.products.count': '{count} من {total} منتج{s}',
   'admin.products.xpoint': 'إكس بوينت',
   'admin.products.tictoc': 'تيك توك',
+
+  // AdminCategories
+  'admin.categories.title': 'الأقسام',
+  'admin.categories.subtitle': 'إدارة أقسام المنتجات',
+  'admin.categories.name': 'الاسم',
+  'admin.categories.store': 'المتجر',
+  'admin.categories.actions': 'إجراءات',
+  'admin.categories.edit': 'تعديل',
+  'admin.categories.delete': 'حذف',
+  'admin.categories.deleting': 'جاري الحذف...',
+  'admin.categories.deleteConfirm': 'حذف "{name}"؟',
+  'admin.categories.save': 'حفظ',
+  'admin.categories.cancel': 'إلغاء',
+  'admin.categories.addCategory': '+ إضافة قسم',
+  'admin.categories.create': 'إنشاء',
+  'admin.categories.creating': 'جاري الإنشاء...',
+  'admin.categories.count': '{count} قسم',
+  'admin.categories.noCategories': 'لا توجد أقسام بعد',
+  'admin.categories.firstCategory': 'أضف أول قسم لتنظيم المنتجات.',
+  'admin.categories.namePlaceholder': 'اسم القسم',
+  'admin.categories.xpoint': 'إكس بوينت',
+  'admin.categories.tictoc': 'تيك توك',
 
   // ProductForm
   'admin.form.edit': 'تعديل المنتج',

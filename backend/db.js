@@ -155,6 +155,49 @@ export async function getAllCategories(store) {
   return data.map(r => ({ name: r.name, store: r.store || 'xpoint' }))
 }
 
+export async function createCategory({ name, store }) {
+  const { data, error } = await getSupabase()
+    .from('categories')
+    .insert({ name, store })
+    .select('name, store')
+    .single()
+
+  if (error) {
+    if (error.code === '23505') throw new Error('Category already exists')
+    throw error
+  }
+  return { name: data.name, store: data.store || 'xpoint' }
+}
+
+export async function updateCategory(currentName, { name, store }) {
+  const { data, error } = await getSupabase()
+    .from('categories')
+    .update({ name, store })
+    .eq('name', currentName)
+    .select('name, store')
+    .single()
+
+  if (error) {
+    if (isNotFoundError(error)) throw new Error('Category not found')
+    if (error.code === '23505') throw new Error('A category with this name already exists')
+    throw error
+  }
+  return { name: data.name, store: data.store || 'xpoint' }
+}
+
+export async function deleteCategory(name, store) {
+  let query = getSupabase()
+    .from('categories')
+    .delete()
+    .eq('name', name)
+
+  if (store) query = query.eq('store', store)
+
+  const { data, error } = await query
+  if (error) throw error
+  if (!data || data.length === 0) throw new Error('Category not found')
+}
+
 export async function listAdmins() {
   const { data, error } = await getSupabase()
     .from('admins')

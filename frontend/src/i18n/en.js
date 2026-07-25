@@ -270,6 +270,7 @@ export default {
   // AdminLayout
   'admin.sidebar.dashboard': 'Dashboard',
   'admin.sidebar.products': 'Products',
+  'admin.sidebar.categories': 'Categories',
   'admin.sidebar.orders': 'Orders',
   'admin.sidebar.support': 'Support',
   'admin.sidebar.analytics': 'Analytics',
@@ -328,6 +329,28 @@ export default {
   'admin.products.count': '{count} of {total} product{s}',
   'admin.products.xpoint': 'Xpoint',
   'admin.products.tictoc': 'Tic Toc',
+
+  // AdminCategories
+  'admin.categories.title': 'Categories',
+  'admin.categories.subtitle': 'Manage your product categories',
+  'admin.categories.name': 'Name',
+  'admin.categories.store': 'Store',
+  'admin.categories.actions': 'Actions',
+  'admin.categories.edit': 'Edit',
+  'admin.categories.delete': 'Delete',
+  'admin.categories.deleting': 'Deleting...',
+  'admin.categories.deleteConfirm': 'Delete "{name}"?',
+  'admin.categories.save': 'Save',
+  'admin.categories.cancel': 'Cancel',
+  'admin.categories.addCategory': '+ Add category',
+  'admin.categories.create': 'Create',
+  'admin.categories.creating': 'Creating...',
+  'admin.categories.count': '{count} categories',
+  'admin.categories.noCategories': 'No categories yet',
+  'admin.categories.firstCategory': 'Add your first category to organize products.',
+  'admin.categories.namePlaceholder': 'Category name',
+  'admin.categories.xpoint': 'Xpoint',
+  'admin.categories.tictoc': 'Tic Toc',
 
   // ProductForm
   'admin.form.edit': 'Edit product',

@@ -37,6 +37,10 @@ export const fetchCategories    = async (store) => {
   const data = await request('/api/categories' + (store ? '?store=' + encodeURIComponent(store) : ''))
   return data.map(c => c.name || c)
 }
+export const fetchAdminCategories = (token) => request('/api/categories', { token })
+export const createCategory       = (token, data) => request('/api/admin/categories',     { method: 'POST',   token, body: data })
+export const updateCategory       = (token, currentName, data) => request(`/api/admin/categories/${encodeURIComponent(currentName)}`, { method: 'PUT', token, body: data })
+export const deleteCategory       = (token, name, store) => request(`/api/admin/categories/${encodeURIComponent(name)}?store=${encodeURIComponent(store || '')}`, { method: 'DELETE', token })
 
 export const fetchOrder         = (id)     => request(`/api/orders/${id}`)
 export const fetchOrdersByPhone = (phone)  => request(`/api/orders?phone=${encodeURIComponent(phone)}`)
