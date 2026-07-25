@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Zap, Headphones, Smartphone, Watch, Plug, Cable, BatteryCharging, ShieldCheck, Music2, Car, Gamepad2, Package } from 'lucide-react'
+import { Zap, Headphones, Smartphone, Watch, Plug, Cable, BatteryCharging, ShieldCheck, Music2, Car, Gamepad2, Package, ArrowRight, ChevronRight, Truck, MessageCircle, RotateCcw } from 'lucide-react'
 import { fetchProducts } from '../api.js'
 import ProductCard from '../components/ProductCard.jsx'
 import { LoadingState, ErrorState } from '../components/StatusStates.jsx'
@@ -67,7 +67,7 @@ function HeroIllustration() {
         </svg>
       </div>
 
-      {/* Logo — stays completely static */}
+      {/* Logo */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="w-36 h-36 sm:w-44 sm:h-44 lg:w-56 lg:h-56 rounded-full border border-[var(--border)] flex items-center justify-center bg-[var(--surface)]/60 backdrop-blur-sm">
           <img src="/logo.jpg" alt={t('brand.tictoc') + ' ' + t('brand.xpoint')} className="w-20 h-20 sm:w-24 sm:h-24 lg:w-36 lg:h-36 rounded-2xl object-cover shadow-lg" />
@@ -106,70 +106,150 @@ export default function Home() {
   }
   useEffect(() => { load() }, [])
 
-  const categories = [...new Set(products.map(p => p.category))].slice(0, 5)
+  const categories = [...new Set(products.map(p => p.category))].slice(0, 6)
   const featured = [...products.filter(p => p.tag === 'Bestseller'), ...products.filter(p => p.tag === 'New')].slice(0, 4)
 
   const categoryStore = {}
+  const categoryCount = {}
   products.forEach(p => {
     const store = p.store || 'xpoint'
     if (!categoryStore[p.category]) categoryStore[p.category] = new Set()
     categoryStore[p.category].add(store)
+    categoryCount[p.category] = (categoryCount[p.category] || 0) + 1
   })
 
   return (
     <div>
+      {/* ── Hero ────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-[var(--border)]">
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-12 pb-16 sm:pt-20 sm:pb-28 grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-          <div className="animate-fade-up order-2 lg:order-1">
-            <h1 className="font-heading text-[2.25rem] sm:text-[3rem] lg:text-[3.5rem] font-bold leading-[1.08] tracking-[-0.025em] text-[var(--text)] mb-5" dangerouslySetInnerHTML={{ __html: t('home.heroTitle') }} />
-            <p className="text-base sm:text-lg text-[var(--muted)] max-w-md leading-relaxed">
-              {t('home.heroDescXpoint', { brand: t('brand.xpoint') })} <br className="hidden sm:block" />
+        {/* Brand glow aura */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[var(--brand)]/[0.04] blur-3xl pointer-events-none animate-glow" style={{ animationDuration: '4s' }} />
+        <div className="absolute top-1/3 right-0 w-[350px] h-[350px] rounded-full bg-[var(--accent)]/[0.03] blur-3xl pointer-events-none animate-glow" style={{ animationDuration: '5s', animationDelay: '1s' }} />
+
+        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 pt-8 pb-10 sm:pt-12 sm:pb-14 lg:pt-14 lg:pb-16 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          {/* Text */}
+          <div className="order-2 lg:order-1">
+            <div className="animate-fade-up inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--brand-dim)] border border-[var(--brand)]/15 mb-5 relative overflow-hidden">
+              {/* Shimmer sweep */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent bg-[length:200%_100%] animate-shimmer pointer-events-none" />
+              <img src="/logo.jpg" alt="" className="w-4 h-4 rounded object-cover relative" />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--brand)] relative">
+                {t('brand.tictoc')} &middot; {t('brand.xpoint')}
+              </span>
+            </div>
+
+            <h1
+              className="animate-fade-up font-heading text-[1.75rem] sm:text-[2.25rem] lg:text-[3rem] font-bold leading-[1.04] tracking-[-0.03em] text-[var(--text)] mb-4"
+              style={{ animationDelay: '0.1s' }}
+              dangerouslySetInnerHTML={{ __html: t('home.heroTitle') }}
+            />
+
+            <p className="animate-fade-up text-sm sm:text-[14px] text-[var(--muted)] max-w-md leading-relaxed" style={{ animationDelay: '0.18s' }}>
+              {t('home.heroDescXpoint', { brand: t('brand.xpoint') })}
+              <br className="hidden sm:block" />
               {t('home.heroDescTictoc', { brand: t('brand.tictoc') })}
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/shop" className="btn-primary px-7 py-3.5 text-[15px]">
+
+            <div className="animate-fade-up mt-7 flex flex-wrap gap-3" style={{ animationDelay: '0.26s' }}>
+              <Link to="/shop" className="btn-primary px-6 py-3 text-[14px] gap-2 shadow-sm group">
                 {t('home.exploreStores')}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <ArrowRight size={15} strokeWidth={2.5} className="animate-slide-arrow" />
               </Link>
-              <Link to="/about" className="btn-secondary px-7 py-3.5 text-[15px]">
+              <Link to="/about" className="btn-secondary px-6 py-3 text-[14px]">
                 {t('home.ourStory')}
               </Link>
             </div>
           </div>
-          <div className="order-1 lg:order-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+
+          {/* Visual */}
+          <div className="order-1 lg:order-2 animate-fade-in min-h-[260px] sm:min-h-[320px] lg:min-h-[380px] flex items-center justify-center" style={{ animationDelay: '0.15s' }}>
             <HeroIllustration />
           </div>
         </div>
       </section>
 
+      {/* ── Loading / Error ─────────────────── */}
       {status === 'loading' && <LoadingState label={t('home.loading')} />}
       {status === 'error' && <ErrorState message={t('home.loadError')} onRetry={load} />}
 
+      {/* ── Ready content ───────────────────── */}
       {status === 'ready' && (
         <>
+          {/* Categories */}
           {categories.length > 0 && (
-            <section className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+              <section className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
               <div className="flex items-end justify-between mb-10">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--muted)] mb-2">{t('home.browse')}</p>
-                  <h2 className="text-heading-xl text-[var(--text)]">{t('home.shopByCategory')}</h2>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--muted)] mb-3">{t('home.browse')}</p>
+                  <h2 className="font-heading text-[1.75rem] sm:text-[2rem] font-semibold text-[var(--text)] tracking-[-0.015em]">{t('home.shopByCategory')}</h2>
                 </div>
-                <Link to="/shop" className="hidden sm:inline-flex text-sm font-medium text-[var(--brand)] hover:underline">
+                <Link to="/shop" className="hidden sm:inline-flex text-sm font-semibold text-[var(--brand)] hover:text-[var(--hot)] transition-colors">
                   {t('home.viewAll')}
                 </Link>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-                {categories.map(cat => {
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                {categories.map((cat, idx) => {
+                  const isHiddenOnMobile = idx >= 4
                   const CategoryIcon = CATEGORY_ICONS[cat] || Package
                   const stores = categoryStore[cat]
                   const singleStore = stores && stores.size === 1 ? [...stores][0] : null
-                  return (
-                    <Link key={cat} to={singleStore ? `/shop/${singleStore}?category=${encodeURIComponent(cat)}` : `/shop`}
-                      className="group surface-card p-5 sm:p-6 flex flex-col items-center text-center gap-3 transition-all duration-300 hover:-translate-y-1 hover:border-[var(--brand)]/40 hover:shadow-md">
-                      <div className="w-14 h-14 rounded-2xl bg-[var(--brand-dim)] flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-[var(--brand)]/15">
-                        <CategoryIcon size={24} strokeWidth={1.75} className="text-[var(--brand)]" />
+                  const count = categoryCount[cat] || 0
+                  const isXpoint = singleStore === 'xpoint'
+                  const isTictoc = singleStore === 'tictoc'
+
+                  const to = singleStore
+                    ? `/shop/${singleStore}?category=${encodeURIComponent(cat)}`
+                    : `/shop`
+
+return (
+                      <Link
+                        key={cat}
+                        to={to}
+                        className={`${isHiddenOnMobile ? 'hidden sm:flex' : 'flex'} group relative items-center gap-5 surface-card p-5 sm:px-6 sm:py-5 transition-all duration-300 hover:border-[var(--brand)]/40 hover:shadow-card-h hover:-translate-y-0.5`}
+                      >
+                        {/* Icon */}
+                        <div className="relative w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center transition-all duration-300"
+                          style={{
+                            background: isXpoint
+                              ? 'color-mix(in srgb, var(--accent) 10%, transparent)'
+                              : 'var(--brand-dim)',
+                          }}>
+                          <CategoryIcon size={20} strokeWidth={1.5}
+                            style={{ color: isXpoint ? 'var(--accent)' : 'var(--brand)' }} />
+                        </div>
+
+                      {/* Label */}
+                      <div className="min-w-0 flex-1">
+                        <span className="inline-flex items-center gap-1.5 min-w-0 flex-1">
+                          <span className="text-[14px] sm:text-[15px] font-semibold text-[var(--text)] leading-tight truncate transition-colors group-hover:text-[var(--brand)]">
+                            {t('cat.' + cat) || cat}
+                          </span>
+                          <span className="text-[11px] text-[var(--muted)] font-medium shrink-0">{count}</span>
+                        </span>
                       </div>
-                      <span className="text-[13px] sm:text-sm font-semibold text-[var(--text)] tracking-tight leading-tight">{t('cat.' + cat) || cat}</span>
+
+                      {/* Store badge */}
+                      {singleStore && (
+<span className="hidden sm:inline-block text-[10px] font-semibold uppercase tracking-[0.08em] rounded-full px-2.5 py-1 shrink-0"
+                            style={{
+                              color: isXpoint ? 'var(--accent)' : 'var(--brand)',
+                              background: isXpoint
+                                ? 'color-mix(in srgb, var(--accent) 8%, transparent)'
+                                : 'var(--brand-dim)',
+                              border: singleStore
+                                ? `1px solid ${isXpoint ? 'color-mix(in srgb, var(--accent) 20%, transparent)' : 'var(--brand)/20'}`
+                                : 'none',
+                            }}>
+                            {singleStore === 'tictoc' ? t('brand.tictoc') : t('brand.xpoint')}
+                          </span>
+                      )}
+
+                      {/* Hover arrow */}
+                      <ChevronRight
+                        size={16} strokeWidth={2}
+                        className="hidden sm:block shrink-0 text-[var(--muted)]/0 group-hover:text-[var(--brand)] transition-all duration-300 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+                      />
                     </Link>
                   )
                 })}
@@ -177,15 +257,16 @@ export default function Home() {
             </section>
           )}
 
+          {/* Featured products */}
           {featured.length > 0 && (
-            <section className="bg-[var(--muted)]/5 border-y border-[var(--border)] py-16 sm:py-24">
+              <section className="bg-[var(--muted)]/5 border-y border-[var(--border)] py-16 sm:py-24">
               <div className="max-w-7xl mx-auto px-5 sm:px-8">
                 <div className="flex items-end justify-between mb-10">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--muted)] mb-2">{t('home.popular')}</p>
-                    <h2 className="text-heading text-[var(--text)]">{t('home.bestsellers')}</h2>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--muted)] mb-3">{t('home.popular')}</p>
+                    <h2 className="font-heading text-[1.75rem] sm:text-[2rem] font-semibold text-[var(--text)] tracking-[-0.015em]">{t('home.bestsellers')}</h2>
                   </div>
-                  <Link to="/shop" className="hidden sm:block text-sm font-medium text-[var(--brand)] hover:underline">
+                  <Link to="/shop" className="hidden sm:inline-flex text-sm font-semibold text-[var(--brand)] hover:text-[var(--hot)] transition-colors">
                     {t('home.viewAll')}
                   </Link>
                 </div>
@@ -196,18 +277,42 @@ export default function Home() {
             </section>
           )}
 
-          <section className="max-w-3xl mx-auto px-5 sm:px-8 py-16 sm:py-28 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--accent-dim)] border border-[var(--accent)]/10 mb-6">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--accent)]">{t('home.whyUs')}</span>
+          {/* Brand story CTA */}
+            <section className="relative overflow-hidden border-y border-[var(--border)] bg-[var(--muted)]/[0.03] py-16 sm:py-24">
+            <div className="max-w-6xl mx-auto px-5 sm:px-8">
+              <div className="text-center mb-14">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--accent-dim)] border border-[var(--accent)]/10 mb-6">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--accent)]">{t('home.whyUs')}</span>
+                </div>
+                <h2 className="font-heading text-[1.75rem] sm:text-[2rem] font-semibold text-[var(--text)] tracking-[-0.015em] mb-4">{t('home.whyUsTitle')}</h2>
+                <p className="text-[15px] text-[var(--muted)] max-w-lg mx-auto leading-relaxed">
+                  {t('home.whyUsDesc')}
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
+                {[
+                  { Icon: ShieldCheck, titleKey: 'home.featureQuality', descKey: 'home.featureQualityDesc' },
+                  { Icon: Truck, titleKey: 'home.featureShipping', descKey: 'home.featureShippingDesc' },
+                  { Icon: MessageCircle, titleKey: 'home.featureSupport', descKey: 'home.featureSupportDesc' },
+                ].map(({ Icon, titleKey, descKey }) => (
+                    <div key={titleKey} className="surface-card p-6 sm:p-8 text-center">
+                    <div className="w-12 h-12 rounded-2xl bg-[var(--brand-dim)] flex items-center justify-center mx-auto mb-5">
+                      <Icon size={22} strokeWidth={1.5} className="text-[var(--brand)]" />
+                    </div>
+                    <h3 className="font-heading text-sm font-bold text-[var(--text)] mb-2">{t(titleKey)}</h3>
+                    <p className="text-[13px] text-[var(--muted)] leading-relaxed">{t(descKey)}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="text-center mt-12">
+                <Link to="/about" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--brand)] hover:text-[var(--hot)] transition-colors">
+                  {t('home.learnMore')}
+                  <ArrowRight size={14} strokeWidth={2.5} />
+                </Link>
+              </div>
             </div>
-            <h2 className="text-heading text-[var(--text)] mb-4">{t('home.whyUsTitle')}</h2>
-            <p className="text-sm text-[var(--muted)] max-w-lg mx-auto leading-relaxed">
-              {t('home.whyUsDesc')}
-            </p>
-            <Link to="/about" className="inline-flex items-center gap-1.5 mt-8 text-sm font-semibold text-[var(--brand)] hover:text-[var(--hot)] transition-colors">
-              {t('home.learnMore')}
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </Link>
           </section>
         </>
       )}

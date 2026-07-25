@@ -520,6 +520,14 @@ export async function updateComplaintStatus(id, status) {
   return data
 }
 
+export async function deleteComplaint(id) {
+  const { error } = await getSupabase()
+    .from('complaints')
+    .delete()
+    .eq('id', id)
+  if (error) throw error
+}
+
 export async function createReturnRequest({ order_id, reason, details }) {
   return insertWithRetry('return_requests', () => ({
     id: nextReturnId(),
@@ -560,4 +568,12 @@ export async function updateReturnStatus(id, status) {
     .select().single()
   if (error) throw error
   return data
+}
+
+export async function deleteReturnRequest(id) {
+  const { error } = await getSupabase()
+    .from('return_requests')
+    .delete()
+    .eq('id', id)
+  if (error) throw error
 }

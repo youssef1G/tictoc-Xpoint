@@ -4,14 +4,14 @@ export const STORES = [
     name: 'Xpoint',
     subtitle: 'Phone Accessories',
     description: 'Cases, chargers, cables, audio & more — everything your phone needs.',
-    color: 'var(--brand)',
+    color: 'var(--accent)',
   },
   {
     slug: 'tictoc',
     name: 'Tic Toc',
     subtitle: 'The Turkish Medal House',
     description: 'Medals, straps & wearable accessories — style your everyday carry.',
-    color: 'var(--accent)',
+    color: 'var(--brand)',
   },
 ]
 

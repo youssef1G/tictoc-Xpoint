@@ -211,7 +211,7 @@ export default function AdminProducts() {
                     </div>
                   </td>
                   <td className="px-4 py-3 hidden md:table-cell">
-                    <span className={`text-[11px] font-semibold ${p.store === 'tictoc' ? 'text-[var(--accent)]' : 'text-[var(--brand)]'}`}>
+                    <span className={`text-[11px] font-semibold ${p.store === 'tictoc' ? 'text-[var(--brand)]' : 'text-[var(--accent)]'}`}>
                       {p.store === 'tictoc' ? t('admin.products.tictoc') : t('admin.products.xpoint')}
                     </span>
                   </td>

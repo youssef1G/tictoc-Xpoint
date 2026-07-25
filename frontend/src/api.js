@@ -62,10 +62,12 @@ export const updateOrder       = (token, id, fields)  => request(`/api/admin/ord
 export const submitComplaint       = (data)               => request('/api/complaints',               { method: 'POST', body: data })
 export const fetchComplaints       = (token)              => request('/api/admin/complaints',          { token })
 export const updateComplaintStatus = (token, id, status)  => request(`/api/admin/complaints/${id}`,   { method: 'PATCH', token, body: { status } })
+export const deleteComplaint       = (token, id)          => request(`/api/admin/complaints/${id}`,   { method: 'DELETE', token })
 
 export const submitReturn       = (data)               => request('/api/returns',              { method: 'POST', body: data })
 export const fetchReturns       = (token)              => request('/api/admin/returns',         { token })
 export const updateReturnStatus = (token, id, status)  => request(`/api/admin/returns/${id}`,  { method: 'PATCH', token, body: { status } })
+export const deleteReturn       = (token, id)          => request(`/api/admin/returns/${id}`,  { method: 'DELETE', token })
 
 // ─── Order Notes ──────────────────────
 export const fetchOrderNotes  = (token, orderId)          => request(`/api/admin/orders/${orderId}/notes`,        { token })

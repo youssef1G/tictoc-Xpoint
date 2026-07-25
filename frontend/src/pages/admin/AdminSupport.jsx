@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useLocale } from '../../context/LocaleContext.jsx'
-import { fetchComplaints, updateComplaintStatus, fetchReturns, updateReturnStatus } from '../../api.js'
+import { fetchComplaints, updateComplaintStatus, fetchReturns, updateReturnStatus, deleteComplaint, deleteReturn } from '../../api.js'
 import CustomSelect from '../../components/CustomSelect.jsx'
 const STATUS_BADGE = {
   pending:   'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800',
@@ -24,6 +24,7 @@ export default function AdminSupport() {
   const [returns, setReturns] = useState([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState({})
+  const [deleting, setDeleting] = useState(null)
   const [tab, setTab] = useState('complaints')
 
   useEffect(() => {
@@ -51,13 +52,29 @@ export default function AdminSupport() {
     finally { setSaving(s => ({ ...s, [id]: false })) }
   }
 
+  async function handleDelete(id, type) {
+    if (type === 'complaints' && !window.confirm('Delete this complaint?')) return
+    if (type === 'returns' && !window.confirm('Delete this return request?')) return
+    setDeleting(id)
+    try {
+      if (type === 'complaints') {
+        await deleteComplaint(token, id)
+        setComplaints(prev => prev.filter(c => c.id !== id))
+      } else {
+        await deleteReturn(token, id)
+        setReturns(prev => prev.filter(r => r.id !== id))
+      }
+    } catch (err) { if (err.status === 401) navigate('/admin-access') }
+    finally { setDeleting(null) }
+  }
+
   const statusOptions = [
     { value: 'pending',  label: t('admin.support.pending')  },
     { value: 'resolved', label: t('admin.support.resolved') },
     { value: 'rejected', label: t('admin.support.dismissed') },
   ]
 
-  function SupportCard({ item, onStatusChange, saving }) {
+  function SupportCard({ item, onStatusChange, onDelete, saving, deleting }) {
     return (
       <div className="surface-card p-5 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -82,6 +99,10 @@ export default function AdminSupport() {
             <CustomSelect value={item.status} onChange={val => onStatusChange(item.id, val)} options={statusOptions} />
           </div>
           {saving && <p className="text-xs text-[var(--muted)]">{t('admin.orders.saving')}</p>}
+          <button onClick={() => onDelete(item.id)} disabled={deleting}
+            className="text-xs text-[var(--muted)] hover:text-red-500 transition-colors disabled:opacity-50">
+            {deleting ? t('admin.products.deleting') : t('admin.products.delete')}
+          </button>
         </div>
       </div>
     )
@@ -112,14 +133,14 @@ export default function AdminSupport() {
         <div className="space-y-4">
           {complaints.length === 0
             ? <p className="text-sm text-[var(--muted)] text-center py-10">{t('admin.support.noComplaints')}</p>
-            : complaints.map(c => <SupportCard key={c.id} item={c} onStatusChange={handleComplaintStatus} saving={saving[c.id]} />)}
+            : complaints.map(c => <SupportCard key={c.id} item={c} onStatusChange={handleComplaintStatus} onDelete={() => handleDelete(c.id, 'complaints')} saving={saving[c.id]} deleting={deleting === c.id} />)}
         </div>
       )}
       {tab === 'returns' && (
         <div className="space-y-4">
           {returns.length === 0
             ? <p className="text-sm text-[var(--muted)] text-center py-10">{t('admin.support.noReturns')}</p>
-            : returns.map(r => <SupportCard key={r.id} item={r} onStatusChange={handleReturnStatus} saving={saving[r.id]} />)}
+            : returns.map(r => <SupportCard key={r.id} item={r} onStatusChange={handleReturnStatus} onDelete={() => handleDelete(r.id, 'returns')} saving={saving[r.id]} deleting={deleting === r.id} />)}
         </div>
       )}
     </div>

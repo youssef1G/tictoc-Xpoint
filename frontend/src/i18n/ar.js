@@ -43,6 +43,12 @@ export default {
   'home.whyUsTitle': 'صُنع لناس بتلاحظ التفاصيل',
   'home.whyUsDesc': 'كل منتج عندنا مختار بعناية على أساس الجودة والتصميم والثقة. إحنا مش بنبيع كل حاجة، بنبيع بس اللي يستاهل يكون عندك.',
   'home.learnMore': 'اعرف أكتر عننا',
+  'home.featureQuality': 'جودة منتقاة',
+  'home.featureQualityDesc': 'كل منتج مختار بعناية لتصميمه ومتانته وقيمته الحقيقية.',
+  'home.featureShipping': 'توصيل سريع',
+  'home.featureShippingDesc': 'شحن موثوق في جميع أنحاء مصر مع تتبع مباشر من الاستلام إلى باب البيت.',
+  'home.featureSupport': 'دعم مباشر',
+  'home.featureSupportDesc': 'تواصل معنا عبر واتساب أو إنستغرام — نرد عليك خلال ساعات.',
   'home.cta.explore': 'استكشف التشكيلة',
 
   // Shop (landing)

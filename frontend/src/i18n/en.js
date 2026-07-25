@@ -43,6 +43,12 @@ export default {
   'home.whyUsTitle': 'Built for people who notice the details',
   'home.whyUsDesc': "Every product we stock is chosen for its quality, design, and reliability. We don't sell everything, just the things that earn their place.",
   'home.learnMore': 'Learn more about us',
+  'home.featureQuality': 'Curated Quality',
+  'home.featureQualityDesc': 'Every product is hand-picked for its design, durability, and real-world value.',
+  'home.featureShipping': 'Fast Delivery',
+  'home.featureShippingDesc': 'Reliable shipping across Egypt with real-time tracking from pickup to doorstep.',
+  'home.featureSupport': 'Direct Support',
+  'home.featureSupportDesc': 'Reach us on WhatsApp or Instagram — we respond within hours, not days.',
   'home.cta.explore': 'Explore the collection',
 
   // Shop (landing)

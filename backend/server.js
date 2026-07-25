@@ -29,9 +29,11 @@ import {
   createComplaint,
   getAllComplaints,
   updateComplaintStatus,
+  deleteComplaint,
   createReturnRequest,
   getAllReturnRequests,
   updateReturnStatus,
+  deleteReturnRequest,
   getOrderNotes,
   addOrderNote,
   deleteOrderNote,
@@ -431,6 +433,15 @@ app.patch('/api/admin/complaints/:id', requireAdmin, async (req, res) => {
   }
 })
 
+app.delete('/api/admin/complaints/:id', requireAdmin, async (req, res) => {
+  try {
+    await deleteComplaint(req.params.id)
+    res.json({ success: true })
+  } catch (err) {
+    sendError(res, err)
+  }
+})
+
 app.get('/api/admin/returns', requireAdmin, async (req, res) => {
   try {
     res.json(await getAllReturnRequests())
@@ -446,6 +457,15 @@ app.patch('/api/admin/returns/:id', requireAdmin, async (req, res) => {
       return res.status(400).json({ error: `Invalid return status. Must be one of: ${VALID_RETURN_STATUSES.join(', ')}` })
     }
     res.json(await updateReturnStatus(req.params.id, status))
+  } catch (err) {
+    sendError(res, err)
+  }
+})
+
+app.delete('/api/admin/returns/:id', requireAdmin, async (req, res) => {
+  try {
+    await deleteReturnRequest(req.params.id)
+    res.json({ success: true })
   } catch (err) {
     sendError(res, err)
   }
