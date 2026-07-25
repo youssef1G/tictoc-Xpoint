@@ -250,7 +250,7 @@ export default function ProductForm() {
                   : catOpen ? 'border-[var(--brand)]' : 'border-[var(--border)]'
               }`}>
                 <Search size={15} className="ml-3.5 text-[var(--muted)] shrink-0" />
-                <input type="text" value={catOpen ? catQuery : (form.category ? t('cat.' + form.category) || form.category : '')}
+                <input type="text" value={catOpen ? catQuery : (form.category ? (() => { const k = 'cat.' + form.category; const v = t(k); return v !== k ? v : form.category })() : '')}
                   onChange={e => { setCatQuery(e.target.value); handleChange('category')(e); setCatOpen(true) }}
                   onFocus={() => { setCatQuery(form.category); setCatOpen(true) }}
                   onKeyDown={handleCatKeyDown}
@@ -276,7 +276,7 @@ export default function ProductForm() {
                           c === form.category ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400 font-medium'
                             : 'text-[var(--text)] hover:bg-gray-100 dark:hover:bg-gray-800'
                         }`}>
-                        <span className="truncate">{t('cat.' + c) || c}</span>
+                        <span className="truncate">{(() => { const k = 'cat.' + c; const v = t(k); return v !== k ? v : c })()}</span>
                         {c === form.category && <Check size={14} className="shrink-0" />}
                       </button>
                     </li>
