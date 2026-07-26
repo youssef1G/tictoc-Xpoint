@@ -74,9 +74,17 @@ app.set('trust proxy', 1)
 
 app.use(helmet())
 
+const ALLOWED_ORIGINS = [
+  process.env.FRONTEND_URL,
+  'https://tictoc-xpoint.vercel.app',
+].filter(Boolean)
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: (origin, cb) => {
+      if (!origin || ALLOWED_ORIGINS.some(o => origin.startsWith(o))) return cb(null, true)
+      cb(null, false)
+    },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
