@@ -74,21 +74,16 @@ app.set('trust proxy', 1)
 
 app.use(helmet())
 
-const ALLOWED_ORIGINS = [
-  process.env.FRONTEND_URL,
+const CORS_ORIGINS = [
   'https://tictoc-xpoint.vercel.app',
+  process.env.FRONTEND_URL,
 ].filter(Boolean)
 
-app.use(
-  cors({
-    origin: (origin, cb) => {
-      if (!origin || ALLOWED_ORIGINS.some(o => origin.startsWith(o))) return cb(null, true)
-      cb(null, false)
-    },
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-)
+app.use(cors({
+  origin: CORS_ORIGINS,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}))
 
 app.use(express.json({ limit: '100kb' }))
 
