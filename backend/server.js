@@ -286,7 +286,7 @@ app.post('/api/checkout/cod', checkoutLimiter, async (req, res) => {
       }
     }
 
-    sendOrderConfirmation(order).catch(() => {})
+    sendOrderConfirmation({ ...order, subtotal: serverTotal, shippingFee }).catch(() => {})
 
     res.json({ orderId: order.id })
   } catch (err) {

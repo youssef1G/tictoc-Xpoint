@@ -113,10 +113,25 @@ function orderConfirmationHtml(order) {
           </table>
         </td></tr>
 
-        <!-- total -->
-        <tr><td style="padding:16px 32px 24px;text-align:right">
-          <span style="font-size:14px;color:${MUTED}">Order total: </span>
-          <span style="font-size:22px;font-weight:800;color:${BRAND}">EGP ${Number(total).toFixed(0)}</span>
+        <!-- totals breakdown -->
+        <tr><td style="padding:16px 32px 8px">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="font-size:14px;color:${MUTED}">Subtotal</td>
+              <td style="font-size:14px;color:${INK};text-align:right;font-weight:600">EGP ${Number(order.subtotal || total).toFixed(0)}</td>
+            </tr>
+            <tr>
+              <td style="font-size:14px;color:${MUTED};padding-top:6px">Shipping</td>
+              <td style="font-size:14px;color:${INK};text-align:right;padding-top:6px;font-weight:600">${order.shippingFee > 0 ? 'EGP ' + Number(order.shippingFee).toFixed(0) : 'Free'}</td>
+            </tr>
+            <tr>
+              <td colspan="2" style="padding:8px 0 0"><div style="height:1px;background:#E5E7EB"></div></td>
+            </tr>
+            <tr>
+              <td style="font-size:15px;color:${INK};font-weight:700;padding-top:8px">Total</td>
+              <td style="font-size:20px;color:${BRAND};text-align:right;font-weight:800;padding-top:8px">EGP ${Number(total).toFixed(0)}</td>
+            </tr>
+          </table>
         </td></tr>
 
         <!-- track button -->
