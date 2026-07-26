@@ -5,17 +5,15 @@ export default function ProductGallery({ images = [], image, name }) {
   const { t } = useLocale()
   const gallery = images && images.length > 0 ? images : (image ? [image] : [])
   const [active, setActive] = useState(0)
-  const [fading, setFading] = useState(false)
   const [paused, setPaused] = useState(false)
   const intervalRef = useRef(null)
   const activeRef = useRef(0)
 
   const transitionTo = useCallback((nextIdx) => {
-    if (fading || nextIdx === activeRef.current) return
-    setFading(true)
+    if (nextIdx === activeRef.current) return
     activeRef.current = nextIdx
     setActive(nextIdx)
-  }, [fading])
+  }, [])
 
   const next = useCallback(() => {
     transitionTo((activeRef.current + 1) % gallery.length)
@@ -24,12 +22,6 @@ export default function ProductGallery({ images = [], image, name }) {
   const prev = useCallback(() => {
     transitionTo((activeRef.current - 1 + gallery.length) % gallery.length)
   }, [gallery.length, transitionTo])
-
-  useEffect(() => {
-    if (!fading) return
-    const t = setTimeout(() => setFading(false), 400)
-    return () => clearTimeout(t)
-  }, [fading])
 
   useEffect(() => {
     if (gallery.length <= 1 || paused) return
@@ -44,11 +36,9 @@ export default function ProductGallery({ images = [], image, name }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--muted)]/5 mb-3 group">
-        {gallery.map((url, idx) => (
-          <img key={url} src={url} alt={name}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[400ms] ${idx === active ? 'opacity-100' : 'opacity-0'}`} />
-        ))}
+      <div className="aspect-square rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--muted)]/5 mb-3 group relative">
+        <img key={active} src={gallery[active]} alt={name}
+          className="w-full h-full object-cover animate-fade-in" />
         {gallery.length > 1 && (
           <>
             <button onClick={prev}

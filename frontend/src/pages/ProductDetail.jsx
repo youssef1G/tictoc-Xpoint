@@ -50,8 +50,8 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
-      <motion.nav className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8"
+    <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14 overflow-x-hidden">
+      <motion.nav className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8 flex-wrap"
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
@@ -87,7 +87,7 @@ export default function ProductDetail() {
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: 0.2 }}
         >
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)] mb-2">{product.category}</p>
-          <h1 className="text-display text-[var(--text)]">{product.name}</h1>
+          <h1 className="text-display text-[var(--text)] break-words">{product.name}</h1>
           <p className="text-2xl font-bold text-[var(--text)] mt-3">
             {t('currency.egp', { amount: Number(product.price).toFixed(0) })}
           </p>
@@ -112,7 +112,7 @@ export default function ProductDetail() {
             </ul>
           )}
 
-          <div className="mt-8 flex items-center gap-4">
+          <div className="mt-8 flex items-center gap-4 flex-wrap">
             <div className={`flex items-center rounded-full border ${outOfStock ? 'border-[var(--border)] opacity-40' : 'border-[var(--border)]'}`}>
               <button onClick={() => setQuantity(q => Math.max(1, q - 1))} disabled={outOfStock}
                 className="h-11 w-11 flex items-center justify-center text-[var(--text)] hover:bg-[var(--muted)]/10 rounded-l-full transition-colors disabled:cursor-not-allowed"
