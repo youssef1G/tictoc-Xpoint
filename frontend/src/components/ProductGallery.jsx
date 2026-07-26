@@ -86,7 +86,7 @@ export default function ProductGallery({ images = [], image, name }) {
       >
         {containerWidth > 0 && (
           <div className="absolute inset-0 rounded-2xl overflow-hidden">
-            <div style={{
+            <div dir="ltr" style={{
               display: 'flex',
               height: '100%',
               transform: `translateX(${-active * containerWidth + dragX}px)`,
