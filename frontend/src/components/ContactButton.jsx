@@ -8,7 +8,7 @@ export default function ContactButton() {
       <div className={`flex flex-col items-center gap-3 transition-all duration-300 ${
         open ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
       }`}>
-        <a href="https://www.instagram.com/tictocxpoint" target="_blank" rel="noopener noreferrer"
+        <a href="https://www.instagram.com/tictoc_x.point?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer"
           className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
           style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%)' }}>
           <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
