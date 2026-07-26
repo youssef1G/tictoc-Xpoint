@@ -124,6 +124,13 @@ export default {
   'checkout.emailError': 'Enter a valid email address',
   'checkout.streetError': 'Please enter your street address',
   'checkout.cityError': 'Please enter your city',
+  'checkout.useLocation': 'Use my location',
+  'checkout.locating': 'Getting location…',
+  'checkout.locationDenied': 'Location access was denied. Please enable it in your browser settings.',
+  'checkout.locationUnavailable': 'Could not determine your location. Please try again.',
+  'checkout.locationError': 'Something went wrong while getting your location.',
+  'checkout.locationUnsupported': 'Location is not supported by your browser.',
+  'checkout.locationNoAddress': 'Could not find an address for your location.',
 
   // Checkout Success
   'checkoutSuccess.title': 'Order placed!',

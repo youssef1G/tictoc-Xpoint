@@ -1,10 +1,13 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'motion/react'
+import { MapPin, LoaderCircle } from 'lucide-react'
 import { useCart } from '../context/CartContext.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
 import { createCodOrder } from '../api.js'
 import { fadeUp, fadeLeft, fadeRight } from '../lib/animations.js'
+
+const NOMINATIM = 'https://nominatim.openstreetmap.org/reverse'
 
 const BASE = import.meta.env.VITE_API_URL || 'http://localhost:4242'
 
@@ -29,7 +32,7 @@ function Field({ label, error, children }) {
 }
 
 export default function Checkout() {
-  const { t } = useLocale()
+  const { t, lang } = useLocale()
   const { items, subtotal, clearCart } = useCart()
   const navigate = useNavigate()
   const egp = (amount) => t('currency.egp', { amount: Number(amount).toFixed(0) })
@@ -37,10 +40,12 @@ export default function Checkout() {
   const emailRef = useRef()
   const addressRef = useRef()
   const cityRef = useRef()
+  const coordsRef = useRef(null)
   const next = (e, ref) => { if (e.key === 'Enter') { e.preventDefault(); ref.current?.focus() } }
   const [form, setForm]   = useState({ name: '', phone: '', email: '', address: '', city: '' })
   const [errors, setErrors]   = useState({})
   const [loading, setLoading] = useState(false)
+  const [locating, setLocating] = useState(false)
   const [serverError, setServerError] = useState('')
   const [shippingFee, setShippingFee] = useState(0)
   const [freeThreshold, setFreeThreshold] = useState(0)
@@ -87,6 +92,47 @@ export default function Checkout() {
       errors[field] ? 'border-red-400' : 'border-[var(--border)]'
     }`
 
+  async function handleGetLocation() {
+    if (!navigator.geolocation) {
+      setServerError(t('checkout.locationUnsupported'))
+      return
+    }
+    setLocating(true)
+    setServerError('')
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { latitude: lat, longitude: lng } = pos.coords
+      coordsRef.current = { lat, lng }
+      try {
+        const params = new URLSearchParams({
+          format: 'json',
+          lat,
+          lon: lng,
+          addressdetails: '1',
+          'accept-language': lang,
+        })
+        const res = await fetch(`${NOMINATIM}?${params}`, {
+          headers: { 'User-Agent': 'TicTocXpoint/1.0' },
+        })
+        if (!res.ok) throw new Error()
+        const data = await res.json()
+        if (!data?.address) { setServerError(t('checkout.locationNoAddress')); return }
+        const addr = data.address
+        const street = [addr.house_number, addr.road].filter(Boolean).join(' ')
+        const city = addr.city || addr.town || addr.village || addr.county || ''
+        setForm(p => ({ ...p, address: street || p.address, city: city || p.city }))
+      } catch {
+        setServerError(t('checkout.locationNoAddress'))
+      } finally {
+        setLocating(false)
+      }
+    }, (err) => {
+      setLocating(false)
+      if (err.code === 1) setServerError(t('checkout.locationDenied'))
+      else if (err.code === 2) setServerError(t('checkout.locationUnavailable'))
+      else setServerError(t('checkout.locationError'))
+    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 })
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setServerError('')
@@ -96,7 +142,7 @@ export default function Checkout() {
     try {
       const res = await createCodOrder({
         items: items.map(i => ({ id: i.id, quantity: i.quantity })),
-        customer: form,
+        customer: coordsRef.current ? { ...form, ...coordsRef.current } : form,
       })
       clearCart()
       navigate(`/checkout/success?method=cod&orderId=${res.orderId}`)
@@ -146,7 +192,18 @@ export default function Checkout() {
           </div>
 
           <div>
-            <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4">{t('checkout.deliveryAddress')}</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-heading text-lg font-semibold text-[var(--text)]">{t('checkout.deliveryAddress')}</h2>
+              <button type="button" onClick={handleGetLocation} disabled={locating}
+                className="flex items-center gap-1.5 text-xs font-semibold text-[var(--brand)] hover:text-[var(--brand-hover)] transition-colors disabled:opacity-50">
+                {locating ? (
+                  <LoaderCircle className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <MapPin className="w-3.5 h-3.5" />
+                )}
+                {locating ? t('checkout.locating') : t('checkout.useLocation')}
+              </button>
+            </div>
             <div className="space-y-4">
               <Field label={t('checkout.streetAddress')} error={errors.address}>
                   <input ref={addressRef} type="text" value={form.address} onChange={set('address')} onKeyDown={e => next(e, cityRef)}
