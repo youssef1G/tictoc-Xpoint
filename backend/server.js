@@ -45,6 +45,7 @@ import {
   getAnalytics,
   getCustomers,
 } from './db.js'
+import { sendOrderConfirmation } from './email.js'
 
 const REQUIRED_ENV_VARS = ['JWT_SECRET', 'ADMIN_USERNAME', 'ADMIN_PASSWORD_HASH', 'FRONTEND_URL']
 
@@ -276,6 +277,8 @@ app.post('/api/checkout/cod', checkoutLimiter, async (req, res) => {
         console.error(`Order ${order.id} placed, but stock decrement failed for ${item.productId}:`, stockErr)
       }
     }
+
+    sendOrderConfirmation(order).catch(() => {})
 
     res.json({ orderId: order.id })
   } catch (err) {
