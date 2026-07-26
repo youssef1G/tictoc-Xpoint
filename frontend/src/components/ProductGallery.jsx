@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useLocale } from '../context/LocaleContext.jsx'
 
+const SWIPE_THRESHOLD = 50
+
 export default function ProductGallery({ images = [], image, name }) {
   const { t } = useLocale()
   const gallery = images && images.length > 0 ? images : (image ? [image] : [])
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
+  const touchStartRef = useRef(null)
   const intervalRef = useRef(null)
   const activeRef = useRef(0)
 
@@ -24,11 +27,27 @@ export default function ProductGallery({ images = [], image, name }) {
     return () => clearInterval(intervalRef.current)
   }, [gallery.length, paused, next])
 
+  const handleTouchStart = useCallback((e) => {
+    touchStartRef.current = e.touches[0].clientX
+  }, [])
+
+  const handleTouchEnd = useCallback((e) => {
+    if (touchStartRef.current === null || gallery.length <= 1) return
+    const diff = touchStartRef.current - e.changedTouches[0].clientX
+    touchStartRef.current = null
+    if (Math.abs(diff) < SWIPE_THRESHOLD) return
+    if (diff > 0) next()
+    else prev()
+  }, [gallery.length, next, prev])
+
   if (gallery.length === 0) return <div className="aspect-square rounded-2xl bg-[var(--muted)]/5 flex items-center justify-center text-xs text-[var(--muted)]">{t('gallery.noImage')}</div>
 
   return (
     <div className="w-full" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <div className="aspect-square rounded-2xl border border-[var(--border)] bg-[var(--muted)]/5 mb-3 relative group">
+      <div className="aspect-square rounded-2xl border border-[var(--border)] bg-[var(--muted)]/5 mb-3 relative group"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         <div className="absolute inset-0 rounded-2xl overflow-hidden">
           <img key={active} src={gallery[active]} alt={name}
             className="w-full h-full object-cover" />
