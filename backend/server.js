@@ -26,7 +26,9 @@ import {
   createOrder,
   updateOrder,
   updateOrderStatus,
+  updateOrderItems,
   decrementStock,
+  incrementStock,
   getDashboardStats,
   createComplaint,
   getAllComplaints,
@@ -333,6 +335,103 @@ app.get('/api/admin/me', requireAdmin, (req, res) => res.json({ ok: true }))
 app.get('/api/admin/dashboard', requireAdmin, async (req, res) => {
   try {
     res.json(await getDashboardStats())
+  } catch (err) {
+    sendError(res, err)
+  }
+})
+
+app.patch('/api/orders/:id/cancel', orderLookupLimiter, async (req, res) => {
+  try {
+    const order = await getOrderById(req.params.id)
+    if (!order) return res.status(404).json({ error: 'Order not found' })
+    if (order.status !== 'pending') return res.status(400).json({ error: 'Only pending orders can be cancelled' })
+
+    const updated = await updateOrderStatus(req.params.id, 'cancelled')
+
+    for (const item of order.items || []) {
+      try {
+        await incrementStock(item.productId, item.quantity)
+      } catch (stockErr) {
+        console.error(`Order ${order.id} cancelled, but stock restore failed for ${item.productId}:`, stockErr)
+      }
+    }
+
+    res.json(updated)
+  } catch (err) {
+    sendError(res, err)
+  }
+})
+
+app.patch('/api/orders/:id/items', orderLookupLimiter, async (req, res) => {
+  try {
+    const order = await getOrderById(req.params.id)
+    if (!order) return res.status(404).json({ error: 'Order not found' })
+    if (order.status !== 'pending') return res.status(400).json({ error: 'Only pending orders can be modified' })
+
+    const { items: newItems } = req.body
+    if (!newItems || !Array.isArray(newItems) || newItems.length === 0) {
+      return res.status(400).json({ error: 'At least one item is required' })
+    }
+
+    const oldItems = order.items || []
+
+    const validatedItems = []
+    let serverTotal = 0
+
+    for (const item of newItems) {
+      if (!item.productId || !item.quantity || item.quantity < 1) {
+        return res.status(400).json({ error: 'Each item must have a productId and quantity >= 1' })
+      }
+
+      const product = await getProductById(item.productId)
+      if (!product) return res.status(400).json({ error: `Product ${item.productId} not found` })
+
+      const oldQty = oldItems.find(o => o.productId === item.productId)?.quantity || 0
+      const qtyDiff = item.quantity - oldQty
+
+      if (qtyDiff > 0 && product.stock !== null && product.stock < qtyDiff) {
+        return res.status(400).json({ error: `Not enough stock for ${product.name}` })
+      }
+
+      validatedItems.push({
+        productId: item.productId,
+        name: product.name,
+        price: product.price,
+        quantity: item.quantity,
+      })
+
+      serverTotal += product.price * item.quantity
+    }
+
+    for (const oldItem of oldItems) {
+      const stillExists = newItems.find(n => n.productId === oldItem.productId)
+      if (!stillExists) {
+        try { await incrementStock(oldItem.productId, oldItem.quantity) } catch (e) { console.error('Stock restore failed:', e) }
+      }
+    }
+
+    for (const validated of validatedItems) {
+      const oldItem = oldItems.find(o => o.productId === validated.productId)
+      const oldQty = oldItem?.quantity || 0
+      const qtyDiff = validated.quantity - oldQty
+
+      if (qtyDiff > 0) {
+        try { await decrementStock(validated.productId, qtyDiff) } catch (e) { console.error('Stock decrement failed:', e) }
+      } else if (qtyDiff < 0) {
+        try { await incrementStock(validated.productId, -qtyDiff) } catch (e) { console.error('Stock restore failed:', e) }
+      }
+    }
+
+    const allSettings = await getSettings()
+    const shippingSetting = allSettings.find(s => s.key === 'shipping')
+    const thresholdSetting = allSettings.find(s => s.key === 'free_shipping_threshold')
+    const threshold = thresholdSetting ? Math.max(0, Number(thresholdSetting.value) || 0) : 0
+    let shippingFee = shippingSetting ? Math.max(0, Number(shippingSetting.value) || 0) : 0
+    if (threshold > 0 && serverTotal >= threshold) shippingFee = 0
+    const grandTotal = Math.round((serverTotal + shippingFee) * 100) / 100
+
+    const updated = await updateOrderItems(req.params.id, validatedItems, grandTotal)
+    res.json(updated)
   } catch (err) {
     sendError(res, err)
   }

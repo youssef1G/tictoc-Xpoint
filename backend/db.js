@@ -333,6 +333,18 @@ export async function updateOrder(id, fields) {
 
 export const updateOrderStatus = (id, status) => updateOrder(id, { status })
 
+export async function updateOrderItems(id, items, total) {
+  const { data, error } = await getSupabase()
+    .from('orders')
+    .update({ items, total, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
 export async function getOrderNotes(orderId) {
   const { data, error } = await getSupabase()
     .from('order_notes')
@@ -486,6 +498,31 @@ export async function getCustomers(search = '') {
 
   return Array.from(customerMap.values())
     .sort((a, b) => b.last_order_date.localeCompare(a.last_order_date))
+}
+
+export async function incrementStock(id, quantity) {
+  const { data: product, error: fetchError } = await getSupabase()
+    .from('products')
+    .select('stock')
+    .eq('id', id)
+    .single()
+
+  if (fetchError) {
+    console.error(`Failed to fetch product ${id} for stock increment:`, fetchError)
+    throw fetchError
+  }
+
+  if (product.stock === null) return
+
+  const { error: updateError } = await getSupabase()
+    .from('products')
+    .update({ stock: product.stock + quantity })
+    .eq('id', id)
+
+  if (updateError) {
+    console.error(`Failed to increment stock for product ${id}:`, updateError)
+    throw updateError
+  }
 }
 
 export async function decrementStock(id, quantity) {

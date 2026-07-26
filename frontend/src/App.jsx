@@ -15,6 +15,7 @@ import About          from './pages/About'
 import CheckoutSuccess from './pages/CheckoutSuccess'
 import CheckoutCancel from './pages/CheckoutCancel'
 import OrderTracking  from './pages/OrderTracking'
+import EditOrder      from './pages/EditOrder'
 import MyOrders       from './pages/MyOrders'
 import NotFound       from './pages/NotFound'
 import AdminAccess    from './pages/AdminAccess'
@@ -67,6 +68,7 @@ export default function App() {
         <Route path="/checkout/success" element={<StorefrontLayout><CheckoutSuccess /></StorefrontLayout>} />
         <Route path="/checkout/cancel" element={<StorefrontLayout><CheckoutCancel /></StorefrontLayout>} />
         <Route path="/order/:id" element={<StorefrontLayout><OrderTracking /></StorefrontLayout>} />
+        <Route path="/order/:id/edit" element={<StorefrontLayout><EditOrder /></StorefrontLayout>} />
         <Route path="/my-orders" element={<StorefrontLayout><MyOrders /></StorefrontLayout>} />
         <Route path="/contact" element={<StorefrontLayout><Contact /></StorefrontLayout>} />
         <Route path="*" element={<StorefrontLayout><NotFound /></StorefrontLayout>} />

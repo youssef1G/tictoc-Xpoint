@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { fetchOrdersByPhone, fetchOrder, submitReturn } from '../api.js'
+import { fetchOrdersByPhone, fetchOrder, submitReturn, cancelOrder } from '../api.js'
 import CustomSelect from '../components/CustomSelect.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
 import { fadeUp, staggerContainer, staggerItem } from '../lib/animations.js'
@@ -116,10 +116,11 @@ function ReturnForm({ orderId, onClose, onSuccess }) {
   )
 }
 
-function OrderCard({ order, returningId, setReturningId }) {
+function OrderCard({ order, returningId, setReturningId, onCancelled }) {
   const { t } = useLocale()
   const egp = (amount) => t('currency.egp', { amount: Number(amount).toFixed(0) })
   const [submittedReturnId, setSubmittedReturnId] = useState(null)
+  const [cancelling, setCancelling] = useState(false)
   const STATUS_LABEL = {
     pending:   t('order.statusPending'),
     confirmed: t('order.statusConfirmed'),
@@ -167,6 +168,29 @@ function OrderCard({ order, returningId, setReturningId }) {
           className="text-xs font-semibold text-[var(--brand)] border border-[var(--brand)]/30 rounded-full px-4 py-1.5 hover:bg-[var(--brand-dim)] transition-colors">
           {t('orders.track')}
         </Link>
+        {order.status === 'pending' && (
+          <>
+            <Link to={`/order/${order.id}/edit`}
+              className="text-xs font-medium text-[var(--brand)] border border-[var(--brand)]/30 rounded-full px-4 py-1.5 hover:bg-[var(--brand-dim)] transition-colors">
+              {t('edit.order')}
+            </Link>
+            <button onClick={async () => {
+              if (!window.confirm(t('orders.cancelConfirm'))) return
+              setCancelling(true)
+              try {
+                await cancelOrder(order.id)
+                if (onCancelled) onCancelled()
+              } catch (err) {
+                alert(err.message || t('orders.cancelError'))
+              } finally {
+                setCancelling(false)
+              }
+            }} disabled={cancelling}
+              className="text-xs font-medium text-red-500 border border-red-200 rounded-full px-4 py-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50">
+              {cancelling ? t('orders.cancelling') : t('orders.cancelOrder')}
+            </button>
+          </>
+        )}
         {order.status === 'delivered' && (
           <button onClick={returningId === order.id ? handleCancel : () => setReturningId(order.id)}
             className={`text-xs font-medium border rounded-full px-4 py-1.5 transition-colors ${
@@ -238,7 +262,7 @@ export default function MyOrders() {
       >
         <form onSubmit={handleLookup} className="space-y-3">
           <div className="flex gap-3">
-            <input type="text" value={query} onChange={e => setQuery(e.target.value)}
+            <input type="text" value={query} onChange={e => setQuery(e.target.value)} data-search-input
               placeholder={t('orders.placeholder')}
               required
               className="flex-1 rounded-full border border-[var(--border)] px-5 py-3 text-sm bg-[var(--surface)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]" />
@@ -271,7 +295,16 @@ export default function MyOrders() {
             <p className="text-xs text-[var(--muted)]">{t('orders.found', { count: orders.length, s: orders.length !== 1 ? 's' : '' })}</p>
             {orders.map(order => (
               <motion.div key={order.id} variants={staggerItem}>
-                <OrderCard order={order} returningId={returningId} setReturningId={setReturningId} />
+                <OrderCard order={order} returningId={returningId} setReturningId={setReturningId}
+                  onCancelled={async () => {
+                    const q = document.querySelector('[data-search-input]')?.value || query
+                    if (isOrderId(q)) {
+                      const o = await fetchOrder(q.toLowerCase())
+                      setOrders(o ? [o] : [])
+                    } else {
+                      setOrders(await fetchOrdersByPhone(q))
+                    }
+                  }} />
               </motion.div>
             ))}
           </motion.div>

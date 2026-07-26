@@ -44,6 +44,8 @@ export const deleteCategory       = (token, name, store) => request(`/api/admin/
 
 export const fetchOrder         = (id)     => request(`/api/orders/${id}`)
 export const fetchOrdersByPhone = (phone)  => request(`/api/orders?phone=${encodeURIComponent(phone)}`)
+export const cancelOrder        = (id)     => request(`/api/orders/${id}/cancel`, { method: 'PATCH' })
+export const updateOrderItems   = (id, items) => request(`/api/orders/${id}/items`, { method: 'PATCH', body: { items } })
 
 export const loginAdmin  = (username, password) => request('/api/admin/login', { method: 'POST', body: { username, password } })
 export const verifyAdmin = (token)              => request('/api/admin/me', { token })

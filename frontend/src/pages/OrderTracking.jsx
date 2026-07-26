@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { fetchOrder } from '../api.js'
+import { fetchOrder, cancelOrder } from '../api.js'
 import { useLocale } from '../context/LocaleContext.jsx'
 import { fadeUp, staggerContainer, staggerItem } from '../lib/animations.js'
 
@@ -25,6 +25,7 @@ export default function OrderTracking() {
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [cancelling, setCancelling] = useState(false)
 
   const load = () => {
     setLoading(true)
@@ -34,6 +35,19 @@ export default function OrderTracking() {
       .finally(() => setLoading(false))
   }
   useEffect(() => { load() }, [id])
+
+  async function handleCancel() {
+    if (!window.confirm(t('orders.cancelConfirm'))) return
+    setCancelling(true)
+    try {
+      await cancelOrder(id)
+      await load()
+    } catch (err) {
+      alert(err.message || t('orders.cancelError'))
+    } finally {
+      setCancelling(false)
+    }
+  }
 
   if (loading) return (
     <div className="flex justify-center py-24">
@@ -159,7 +173,7 @@ export default function OrderTracking() {
         </div>
       </motion.div>
 
-      <motion.div className="flex gap-3"
+      <motion.div className="flex flex-wrap gap-3"
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -173,6 +187,18 @@ export default function OrderTracking() {
           className="text-xs font-medium text-[var(--muted)] border border-[var(--border)] rounded-full px-4 py-2 hover:text-[var(--text)] transition-colors">
           {t('tracking.backOrders')}
         </Link>
+        {order.status === 'pending' && (
+          <>
+            <Link to={`/order/${order.id}/edit`}
+              className="text-xs font-medium text-[var(--brand)] border border-[var(--brand)]/30 rounded-full px-4 py-2 hover:bg-[var(--brand-dim)] transition-colors">
+              {t('edit.order')}
+            </Link>
+            <button onClick={handleCancel} disabled={cancelling}
+              className="text-xs font-medium text-red-500 border border-red-200 rounded-full px-4 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50">
+              {cancelling ? t('orders.cancelling') : t('orders.cancelOrder')}
+            </button>
+          </>
+        )}
       </motion.div>
     </div>
   )
