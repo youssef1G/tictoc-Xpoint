@@ -50,7 +50,7 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14 overflow-x-hidden">
+    <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
       <motion.nav className="flex items-center gap-2 text-xs text-[var(--muted)] mb-8 flex-wrap"
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}

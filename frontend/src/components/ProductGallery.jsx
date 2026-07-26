@@ -9,19 +9,14 @@ export default function ProductGallery({ images = [], image, name }) {
   const intervalRef = useRef(null)
   const activeRef = useRef(0)
 
-  const transitionTo = useCallback((nextIdx) => {
-    if (nextIdx === activeRef.current) return
-    activeRef.current = nextIdx
-    setActive(nextIdx)
+  const go = useCallback((idx) => {
+    if (idx === activeRef.current) return
+    activeRef.current = idx
+    setActive(idx)
   }, [])
 
-  const next = useCallback(() => {
-    transitionTo((activeRef.current + 1) % gallery.length)
-  }, [gallery.length, transitionTo])
-
-  const prev = useCallback(() => {
-    transitionTo((activeRef.current - 1 + gallery.length) % gallery.length)
-  }, [gallery.length, transitionTo])
+  const next = useCallback(() => go((activeRef.current + 1) % gallery.length), [gallery.length, go])
+  const prev = useCallback(() => go((activeRef.current - 1 + gallery.length) % gallery.length), [gallery.length, go])
 
   useEffect(() => {
     if (gallery.length <= 1 || paused) return
@@ -32,13 +27,12 @@ export default function ProductGallery({ images = [], image, name }) {
   if (gallery.length === 0) return <div className="aspect-square rounded-2xl bg-[var(--muted)]/5 flex items-center justify-center text-xs text-[var(--muted)]">{t('gallery.noImage')}</div>
 
   return (
-    <div
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      <div className="aspect-square rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--muted)]/5 mb-3 group relative">
-        <img key={active} src={gallery[active]} alt={name}
-          className="w-full h-full object-cover animate-fade-in" />
+    <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <div className="aspect-square rounded-2xl border border-[var(--border)] bg-[var(--muted)]/5 mb-3 relative group">
+        <div className="absolute inset-0 rounded-2xl overflow-hidden">
+          <img key={active} src={gallery[active]} alt={name}
+            className="w-full h-full object-cover" />
+        </div>
         {gallery.length > 1 && (
           <>
             <button onClick={prev}
@@ -51,7 +45,7 @@ export default function ProductGallery({ images = [], image, name }) {
             </button>
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
               {gallery.map((_, idx) => (
-                <button key={idx} onClick={() => transitionTo(idx)}
+                <button key={idx} onClick={() => go(idx)}
                   className={`w-1.5 h-1.5 rounded-full transition-all ${active === idx ? 'bg-white w-3' : 'bg-white/50 hover:bg-white/70'}`} />
               ))}
             </div>
@@ -61,7 +55,7 @@ export default function ProductGallery({ images = [], image, name }) {
       {gallery.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-1">
           {gallery.map((url, idx) => (
-            <button key={url + idx} onClick={() => transitionTo(idx)}
+            <button key={url + idx} onClick={() => go(idx)}
               className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-colors ${
                 active === idx ? 'border-[var(--brand)]' : 'border-[var(--border)] hover:border-[var(--muted)]'
               }`}>
