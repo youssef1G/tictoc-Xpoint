@@ -64,7 +64,7 @@ export default function ProductDetail() {
       </motion.nav>
 
       <div className="grid md:grid-cols-2 gap-10 sm:gap-16">
-        <motion.div className="relative"
+        <motion.div className="relative min-w-0"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: 0.1 }}
@@ -81,7 +81,7 @@ export default function ProductDetail() {
           ) : null}
         </motion.div>
 
-        <motion.div className="flex flex-col justify-start"
+        <motion.div className="flex flex-col justify-start min-w-0"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: 0.2 }}
