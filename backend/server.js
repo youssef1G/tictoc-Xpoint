@@ -1,6 +1,5 @@
 import 'dotenv/config'
 import express from 'express'
-import cors from 'cors'
 import bcrypt from 'bcryptjs'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
@@ -79,11 +78,17 @@ const CORS_ORIGINS = [
   process.env.FRONTEND_URL,
 ].filter(Boolean)
 
-app.use(cors({
-  origin: CORS_ORIGINS,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}))
+app.use((req, res, next) => {
+  const origin = req.headers.origin
+  if (origin && CORS_ORIGINS.some(o => origin === o)) {
+    res.setHeader('Access-Control-Allow-Origin', origin)
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    res.setHeader('Access-Control-Max-Age', '86400')
+  }
+  if (req.method === 'OPTIONS') return res.status(204).end()
+  next()
+})
 
 app.use(express.json({ limit: '100kb' }))
 
