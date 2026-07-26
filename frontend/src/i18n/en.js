@@ -124,11 +124,6 @@ export default {
   'checkout.emailError': 'Enter a valid email address',
   'checkout.streetError': 'Please enter your street address',
   'checkout.cityError': 'Please enter your city',
-  'checkout.locateMe': 'Locate me',
-  'checkout.pinLocation': 'Pin delivery location',
-  'checkout.pinLocationHint': 'Click the map to drop a pin, or drag the pin to adjust. Click "Locate me" to centre the map on your current position.',
-  'checkout.locationError': 'Could not determine your location. Please try again.',
-  'checkout.locationUnsupported': 'Location is not supported by your browser.',
 
   // Checkout Success
   'checkoutSuccess.title': 'Order placed!',

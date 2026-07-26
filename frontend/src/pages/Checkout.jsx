@@ -1,12 +1,10 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { MapPin } from 'lucide-react'
 import { useCart } from '../context/CartContext.jsx'
 import { useLocale } from '../context/LocaleContext.jsx'
 import { createCodOrder } from '../api.js'
 import { fadeUp, fadeLeft, fadeRight } from '../lib/animations.js'
-import LocationPicker from '../components/LocationPicker.jsx'
 
 const BASE = import.meta.env.VITE_API_URL || 'http://localhost:4242'
 
@@ -44,7 +42,6 @@ export default function Checkout() {
   const [errors, setErrors]   = useState({})
   const [loading, setLoading] = useState(false)
   const [serverError, setServerError] = useState('')
-  const [location, setLocation] = useState(null)
   const [shippingFee, setShippingFee] = useState(0)
   const [freeThreshold, setFreeThreshold] = useState(0)
   const [baseShipping, setBaseShipping] = useState(0)
@@ -99,7 +96,7 @@ export default function Checkout() {
     try {
       const res = await createCodOrder({
         items: items.map(i => ({ id: i.id, quantity: i.quantity })),
-        customer: location ? { ...form, ...location } : form,
+        customer: form,
       })
       clearCart()
       navigate(`/checkout/success?method=cod&orderId=${res.orderId}`)
@@ -160,15 +157,6 @@ export default function Checkout() {
                     placeholder={t('checkout.cityPlaceholder')} className={inputCls('city')} />
               </Field>
             </div>
-          </div>
-
-          <div>
-            <h2 className="font-heading text-lg font-semibold text-[var(--text)] mb-4 flex items-center gap-2">
-              <MapPin className="w-4 h-4" />
-              {t('checkout.pinLocation')}
-            </h2>
-            <LocationPicker value={location} onChange={setLocation} />
-            <p className="text-xs text-[var(--muted)] mt-1.5">{t('checkout.pinLocationHint')}</p>
           </div>
 
           <div className="flex items-start gap-3 bg-[var(--brand-dim)] border border-[var(--brand)]/10 rounded-2xl px-5 py-4">
