@@ -124,13 +124,11 @@ export default {
   'checkout.emailError': 'ادخل بريد إلكتروني صحيح',
   'checkout.streetError': 'من فضلك ادخل عنوان الشارع',
   'checkout.cityError': 'من فضلك ادخل المدينة',
-  'checkout.useLocation': 'استخدم موقعي',
-  'checkout.locating': 'جاري تحديد الموقع…',
-  'checkout.locationDenied': 'تم رفض الوصول للموقع. من فضلك فعّل صلاحية الموقع في إعدادات المتصفح.',
-  'checkout.locationUnavailable': 'مقدرناش نحدد موقعك. حاول مرة تانية.',
-  'checkout.locationError': 'حصل خطأ أثناء تحديد موقعك.',
+  'checkout.locateMe': 'تحديد موقعي',
+  'checkout.pinLocation': 'حدد موقع التوصيل',
+  'checkout.pinLocationHint': 'اضغط على الخريطة لوضع دبوس، أو اسحب الدبوس لتعديل الموقع. اضغط "تحديد موقعي" لتوسيط الخريطة على مكانك الحالي.',
+  'checkout.locationError': 'مقدرناش نحدد موقعك. حاول مرة تانية.',
   'checkout.locationUnsupported': 'الموقع غير مدعوم في متصفحك.',
-  'checkout.locationNoAddress': 'مقدرناش نلاقي عنوان لموقعك.',
 
   // Checkout Success
   'checkoutSuccess.title': 'تم تنفيذ الطلب!',
